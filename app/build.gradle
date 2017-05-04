@@ -1,0 +1,55 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.video.youtuberplayer"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    android.applicationVariants.all{ variant ->
+        variant.mergeAssets.doLast {
+            File fonts = file("$variant.mergeAssets.outputDir/fonts")
+            if (fonts.exists()) {
+                for (File file : fonts.listFiles()) {
+                    if (file.getName().contains("RobotoSlab") || file.getName().contains("Roboto-BlackItalic") ||
+                            file.getName().contains("Roboto-BoldItalic") || file.getName().contains("Roboto-Italic") ||
+                            file.getName().contains("Roboto-LightItalic") || file.getName().contains("Roboto-MediumItalic") ||
+                            file.getName().contains("Roboto-Regular") || file.getName().contains("Roboto-ThinItalic") ||
+                            file.getName().contains("RobotoCondensed-BoldItalic") || file.getName().contains("RobotoCondensed-Italic") ||
+                            file.getName().contains("RobotoCondensed-LightItalic") || file.getName().contains("RobotoMono-BoldItalic") ||
+                            file.getName().contains("RobotoMono-Italic") || file.getName().contains("RobotoMono-LightItalic") ||
+                            file.getName().contains("RobotoMono-MediumItalic") || file.getName().contains("RobotoMono-Regular") ||
+                            file.getName().contains("RobotoMono-ThinItalic")) {
+                        println("delete " + file.getName() + " font")
+                        file.delete()
+                    };
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    compile 'com.balysv:material-ripple:1.0.2'
+    compile 'com.github.johnkil.android-robototextview:robototextview:3.0.0'
+}

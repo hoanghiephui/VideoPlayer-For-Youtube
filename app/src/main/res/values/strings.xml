@@ -1,0 +1,15 @@
+<resources>
+  <string name="app_name">Video Player for Youtube</string>
+
+  <string name="navigation_drawer_open">Open navigation drawer</string>
+  <string name="navigation_drawer_close">Close navigation drawer</string>
+
+  <string name="action_settings">Settings</string>
+  <string name="recent_upload">Recently Uploaded</string>
+  <string name="recent_upload_subtitle">Recommended videos for you</string>
+  <string name="more">Read more</string>
+  <string name="trending">Trending</string>
+  <string name="trending_subtitle">The pulse of what\'s trending on YouTube</string>
+  <string name="recomment">Recommended</string>
+  <string name="recomment_subtitle">Based on your Watch History</string>
+</resources>

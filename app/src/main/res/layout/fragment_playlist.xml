@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="fill_vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_default_min"
+        android:orientation="vertical">
+
+      <com.balysv.materialripple.MaterialRippleLayout
+          android:id="@+id/movie_releasing_week_riple"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          app:mrl_rippleColor="@color/colorAccent"
+          app:mrl_rippleOverlay="true">
+
+        <LinearLayout style="@style/TitleBackground">
+
+          <LinearLayout
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="0.85"
+              android:orientation="vertical">
+
+            <TextView
+                style="@style/TitleTitleTextView"
+                android:text="@string/recent_upload"/>
+
+            <TextView
+                style="@style/TitleSubtitleTextView"
+                android:text="@string/recent_upload_subtitle"/>
+
+          </LinearLayout>
+
+          <include layout="@layout/init_button_more"/>
+
+        </LinearLayout>
+
+      </com.balysv.materialripple.MaterialRippleLayout>
+
+      <FrameLayout
+          android:id="@+id/container_releasing_week_movies"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:minHeight="@dimen/recycler_view_min_height"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/viewAds"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_default_medium"
+        android:orientation="horizontal"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_default_medium"
+        android:background="@color/colorAccent"
+        android:orientation="vertical">
+
+      <com.balysv.materialripple.MaterialRippleLayout
+          android:id="@+id/movie_populares_riple"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          app:mrl_rippleColor="@color/colorPrimaryDark"
+          app:mrl_rippleOverlay="true">
+
+        <LinearLayout style="@style/TitleBackground">
+
+          <LinearLayout
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="0.85"
+              android:orientation="vertical">
+
+            <TextView
+                style="@style/TitleTitleTextView"
+                android:text="@string/trending"
+                android:textColor="@android:color/white"/>
+
+            <TextView
+                style="@style/TitleSubtitleTextView"
+                android:text="@string/trending_subtitle"
+                android:textColor="@color/divider"/>
+
+          </LinearLayout>
+
+          <include layout="@layout/init_button_more"/>
+
+        </LinearLayout>
+
+      </com.balysv.materialripple.MaterialRippleLayout>
+
+      <FrameLayout
+          android:id="@+id/container_popular_movies"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:minHeight="@dimen/recycler_view_min_height"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_default_medium"
+        android:orientation="vertical">
+
+      <com.balysv.materialripple.MaterialRippleLayout
+          android:id="@+id/movie_now_playing_riple"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          app:mrl_rippleColor="@color/colorAccent"
+          app:mrl_rippleOverlay="true">
+
+        <LinearLayout style="@style/TitleBackground">
+
+          <LinearLayout
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="0.85"
+              android:orientation="vertical">
+
+            <TextView
+                style="@style/TitleTitleTextView"
+                android:text="@string/recomment"/>
+
+            <TextView
+                style="@style/TitleSubtitleTextView"
+                android:text="@string/recomment_subtitle"/>
+
+          </LinearLayout>
+
+          <include layout="@layout/init_button_more"/>
+
+        </LinearLayout>
+
+      </com.balysv.materialripple.MaterialRippleLayout>
+
+      <FrameLayout
+          android:id="@+id/container_now_playing_movies"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:minHeight="@dimen/recycler_view_min_height"/>
+
+    </LinearLayout>
+  </LinearLayout>
+</android.support.v4.widget.NestedScrollView>
