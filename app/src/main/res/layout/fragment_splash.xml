@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/coordenation_layout"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:fitsSystemWindows="true">
+
+  <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_splash"
+    android:fitsSystemWindows="true">
+
+    <com.tuyenmonkey.mkloader.MKLoader
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/logos"
+      android:layout_centerHorizontal="true"
+      android:layout_gravity="center"
+      android:gravity="center"
+      app:mk_type="Worm"/>
+
+    <android.support.v7.widget.AppCompatImageView
+      android:id="@+id/logos"
+      android:layout_width="200dp"
+      android:layout_height="60dp"
+      android:layout_above="@+id/title_app"
+      android:layout_centerHorizontal="true"
+      android:layout_gravity="center"
+      android:layout_marginBottom="27dp"
+      android:gravity="center"
+      app:srcCompat="@drawable/ic_logo"/>
+
+    <com.devspark.robototextview.widget.RobotoTextView
+      android:id="@+id/title_app"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_centerHorizontal="true"
+      android:layout_gravity="center"
+      android:layout_marginBottom="20dp"
+      android:text="@string/copy"
+      android:textColor="@android:color/white"
+      android:textSize="13sp"
+      app:typeface="roboto_thin"/>
+
+  </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

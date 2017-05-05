@@ -2,10 +2,13 @@
 
   <!-- Base application theme. -->
   <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-    <!-- Customize your theme here. -->
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+    <item name="actionMenuTextColor">@android:color/white</item>
+    <!--<item name="android:windowBackground">@color/windowBg</item>-->
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
   </style>
 
   <style name="AppTheme.NoActionBar">
@@ -54,6 +57,18 @@
     <item name="android:layout_gravity">left|center_vertical</item>
     <item name="android:textColor">@color/primary_text</item>
     <item name="android:textSize">@dimen/txt_size_small</item>
+  </style>
+
+  <!-- Login -->
+
+  <style name="LoginButtonStyle">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textColor">@android:color/white</item>
+    <item name="android:paddingLeft">@dimen/margin_default_medium</item>
+    <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+    <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+    <item name="android:layout_marginBottom">@dimen/margin_default_min</item>
   </style>
 
 </resources>

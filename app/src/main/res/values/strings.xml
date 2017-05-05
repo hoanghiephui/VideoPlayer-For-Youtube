@@ -12,4 +12,79 @@
   <string name="trending_subtitle">The pulse of what\'s trending on YouTube</string>
   <string name="recomment">Recommended</string>
   <string name="recomment_subtitle">Based on your Watch History</string>
+  <string name="try_again">Try again</string>
+  <string name="error_no_internet">No connection</string>
+  <string name="error_no_server">Server error</string>
+  <string name="erro_unexpected">Unexpected error</string>
+  <string name="could_not_get_videos">Could not get %s videos.</string>
+  <string name="views">%,d views</string>
+  <string name="LIVE">LIVE</string>
+  <string name="error_stream_err_unavailable">Error message is unavailable.</string>
+  <string name="error_stream_decryption_fail">Could not load decryption code for the Youtube service.</string>
+  <string name="error_stream_parse_error">Parsing error.</string>
+
+  <string name="error_video_play">Play Video Error</string>
+  <string name="error_video_streams_empty">The video %s has no streams!</string>
+  <string name="error_get_video_desc">An error has occurred while retrieving video\'s description.</string>
+  <string name="error_invalid_url">Invalid video URL: %s</string>
+
+  <string name="warning_live_video">Cannot play live streams for now.  Play live stream externally?</string>
+
+  <string name="ratings_disabled">Ratings disabled</string>
+
+  <string name="loading_video">Loading video…</string>
+  <string name="get_new_video_steam">New Stream</string>
+  <string name="open_in_browser">Open in browser</string>
+  <string name="open_with">Open with…</string>
+  <string name="share">Share</string>
+  <string name="share_via">Share via</string>
+  <string name="copy_url">Copy URL</string>
+  <string name="url_copied_to_clipboard">URL copied to clipboard.</string>
+
+  <string name="error_get_comments">An error has occurred while getting comments.</string>
+  <string name="no_video_comments">This video has no comments or comments are disabled.</string>
+  <string name="view_replies">View replies</string>
+  <string name="hide_replies">Hide replies</string>
+
+  <string name="enter_video_url">Enter Video URL</string>
+  <string name="play">Play</string>
+  <string name="cancel">Cancel</string>
+  <string name="clear">Clear</string>
+
+  <string name="subscriptions">Subscriptions</string>
+  <string name="subscribe">Subscribe</string>
+  <string name="unsubscribe">Unsubscribe</string>
+  <string name="total_subscribers">%,d subscribers</string>
+
+  <string name="subscribed">Subscribed</string>
+  <string name="unsubscribed">Unsubscribed</string>
+
+  <string name="error_get_subbed_channels">An error has occurred while getting subscribed channels.</string>
+  <string name="error_check_if_user_has_subbed">Unable to check if user has subscribed the channel (id=%s)</string>
+  <string name="error_unable_to_subscribe">Unable to (un)subscribe the channel (id=%s)</string>
+
+  <string name="featured">Featured</string>
+  <string name="most_popular">Most Popular</string>
+
+  <string name="feed">Feed</string>
+
+  <string name="fetching_subscription_videos">Fetching videos from subscribed channels</string>
+  <string name="fetched_videos_from_channels">Fetched %1$d videos from %2$d/%3$d channels.</string>
+  <string name="no_new_videos_found">No new videos found.</string>
+  <string name="no_subscriptions_text">You aren\'t subscribed to any channel.\n\nOnce you are, all videos uploaded to your subscribed channels within the last month will appear here.</string>
+  <string name="bookmarks">Bookmarks</string>
+
+  <string name="bookmark">Bookmark</string>
+  <string name="video_bookmarked">Video bookmarked</string>
+  <string name="video_bookmarked_error">Could not bookmark the video.</string>
+
+  <string name="unbookmark">Unbookmark</string>
+  <string name="video_unbookmarked">Video unbookmarked</string>
+  <string name="video_unbookmarked_error">Could not unbookmark the video.</string>
+
+  <string name="no_bookmarked_videos_text">You haven\'t bookmarked any videos yet.\n\nOnce you do, they will show up here.</string>
+  <string name="copy">© 2017 by Living Solutions</string>
+  <string name="login_google_description">Login with Google</string>
+  <string name="login_google_title">Login with Google</string>
+
 </resources>

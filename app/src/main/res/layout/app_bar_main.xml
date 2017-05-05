@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.video.youtuberplayer.MainActivity">
+    android:id="@+id/contentPanel"
+    tools:context="com.video.youtuberplayer.ui.view.activity.MainActivity">
 
   <android.support.design.widget.AppBarLayout
       android:layout_width="match_parent"
@@ -20,7 +21,7 @@
 
   </android.support.design.widget.AppBarLayout>
 
-  <include layout="@layout/fragment_playlist"/>
+  <include layout="@layout/content_main"/>
 
   <android.support.design.widget.FloatingActionButton
       android:id="@+id/fab"
