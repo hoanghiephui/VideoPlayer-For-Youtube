@@ -89,5 +89,8 @@
   <string name="no_video_find">No videos found</string>
   <string name="download">Download</string>
   <string name="popup">Show popup</string>
+  <string name="background">Background</string>
+  <string name="quality">Quality</string>
+  <string name="next_video_title">Next video</string>
 
 </resources>

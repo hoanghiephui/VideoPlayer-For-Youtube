@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+  <item
+    android:id="@+id/menu_quality"
+    android:icon="@drawable/ic_settings_black_24dp"
+    android:title="@string/quality"
+    app:showAsAction="always"/>
+
+  <item
+    android:id="@+id/menu_backgroud"
+    android:icon="@drawable/ic_hearing_grey_600_24dp"
+    app:showAsAction="always"
+    android:title="@string/background"/>
+  <item
+    android:id="@+id/menu_cancel"
+    android:icon="@drawable/ic_clear_black_24dp"
+    android:title="@string/cancel"
+    app:showAsAction="always"/>
+</menu>

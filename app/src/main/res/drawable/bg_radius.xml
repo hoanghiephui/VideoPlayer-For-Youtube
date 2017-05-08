@@ -9,5 +9,5 @@
       android:type="radial"/>
 
   <corners
-      android:radius="6dp"/>
+      android:radius="4dp"/>
 </shape>
