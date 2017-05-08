@@ -59,26 +59,24 @@ public class GetFeaturedVideos extends GetYouTubeVideos {
   public List<YouTubeVideo> getNextVideos() {
     List<Video> searchResultList = null;
 
-    if (!noMoreVideoPages()) {
-      try {
-        // set the page token/id to retrieve
-        videosList.setPageToken(nextPageToken);
+    try {
+      // set the page token/id to retrieve
+      videosList.setPageToken(nextPageToken);
 
-        // communicate with YouTube
-        VideoListResponse response = videosList.execute();
+      // communicate with YouTube
+      VideoListResponse response = videosList.execute();
 
-        // get videos
-        searchResultList = response.getItems();
+      // get videos
+      searchResultList = response.getItems();
 
-        // set the next page token
-        nextPageToken = response.getNextPageToken();
+      // set the next page token
+      nextPageToken = response.getNextPageToken();
 
-        // if nextPageToken is null, it means that there are no more videos
-        if (nextPageToken == null)
-          noMoreVideoPages = true;
-      } catch (IOException e) {
-        Log.e(TAG, "Error has occurred while getting Featured Videos.", e);
-      }
+      // if nextPageToken is null, it means that there are no more videos
+      if (nextPageToken == null)
+        noMoreVideoPages = true;
+    } catch (IOException e) {
+      Log.e(TAG, "Error has occurred while getting Featured Videos.", e);
     }
 
     return toYouTubeVideoList(searchResultList);

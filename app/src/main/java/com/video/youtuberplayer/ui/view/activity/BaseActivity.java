@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.utils.ServerUtils;
 

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.model.YouTubeVideo;
 
@@ -49,7 +50,11 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
       });
       ((VideoCategoryViewHolder) holder).title.setText(youTubeVideo.getTitle());
-      Glide.with(holder.itemView.getContext()).load(youTubeVideo.getThumbnailUrl()).into(((VideoCategoryViewHolder) holder).thumbnail);
+      Glide.with(holder.itemView.getContext()).load(youTubeVideo.getThumbnailUrl())
+              .thumbnail(0.5f)
+              .crossFade()
+              .diskCacheStrategy(DiskCacheStrategy.ALL)
+              .into(((VideoCategoryViewHolder) holder).thumbnail);
       ((VideoCategoryViewHolder) holder).channel.setText(youTubeVideo.getChannelName());
       ((VideoCategoryViewHolder) holder).duration.setText(youTubeVideo.getDuration());
       ((VideoCategoryViewHolder) holder).publishDate.setText(youTubeVideo.getPublishDatePretty());

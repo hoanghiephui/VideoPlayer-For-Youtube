@@ -153,12 +153,15 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
     interceptor = new GetFeaturedVideoInterceptor();
     presenter = new GetFraturedViewPresenter(interceptor, new CompositeDisposable());
     presenter.onBindView(this);
-
+    setupLayoutManager();
+    mMoviesRecyclerView.addOnScrollListener(createOnScrollListener());
+    mMoviesRecyclerView.setNestedScrollingEnabled(false);
+    setupAdapter();
     if (mSwipeRefreshLayout != null) {
-      mlistVideo.clear();
       mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
+          mlistVideo.clear();
           loadVideo(null);
         }
       });
@@ -201,14 +204,7 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
   @Override
   public void setupRecyclerView() {
     if (!mlistVideo.isEmpty()){
-      if (videoAdapter == null) {
-        setupLayoutManager();
-        mMoviesRecyclerView.addOnScrollListener(createOnScrollListener());
-        mMoviesRecyclerView.setNestedScrollingEnabled(false);
-        setupAdapter();
-      } else {
-        onUpdateView();
-      }
+      onUpdateView();
     }
   }
 

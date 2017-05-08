@@ -7,8 +7,10 @@ import com.video.youtuberplayer.model.VideoCategory;
 import com.video.youtuberplayer.ui.contracts.GetFeaturedVideoContract;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observer;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
@@ -30,9 +32,9 @@ public class GetFraturedViewPresenter extends BasePresenter<GetFeaturedVideoCont
     mView.setProgressVisibility(View.VISIBLE);
     if (mView.isInternetConnected()) {
       mInterceptor.getFeaturedVideo(videos, maxResults, token, tokenNextPage)
-              .subscribeOn(Schedulers.io())
+              .delay(2000, TimeUnit.MILLISECONDS)
+              .subscribeOn(Schedulers.newThread())
               .observeOn(AndroidSchedulers.mainThread())
-              .unsubscribeOn(Schedulers.io())
               .subscribe(onGetFeatured());
     } else {
       noConnectionError();
@@ -50,13 +52,8 @@ public class GetFraturedViewPresenter extends BasePresenter<GetFeaturedVideoCont
       @Override
       public void onNext(@NonNull GetYouTubeVideos videos) {
         if (videos != null) {
-          if (videos.noMoreVideoPages()) {
-            mView.setListVideo(videos.getNextVideos(), videos.noMoreVideoPages());
-            mView.setupRecyclerView();
-          } else {
-            mView.addAllVideo(videos.getNextVideos(), videos.noMoreVideoPages());
-            mView.onUpdateView();
-          }
+          mView.addAllVideo(videos.getNextVideos(), videos.noMoreVideoPages());
+          mView.onUpdateView();
           if (videos.tokenNextPage() != null) {
             mView.setTokenNextPage(videos.tokenNextPage());
           }
