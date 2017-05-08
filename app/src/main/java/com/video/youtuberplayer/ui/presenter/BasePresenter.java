@@ -4,12 +4,17 @@ import android.view.View;
 
 import com.video.youtuberplayer.ui.view.IView;
 
+import io.reactivex.disposables.CompositeDisposable;
+
 public abstract class BasePresenter<V extends IView, I> implements IPresenter<V> {
 
   protected V mView;
   protected I mInterceptor;
 
-  protected BasePresenter(I interceptor) {
+  protected CompositeDisposable mSubscribers;
+
+  protected BasePresenter(I interceptor, CompositeDisposable compositeDisposable) {
+    mSubscribers = compositeDisposable;
     mInterceptor = interceptor;
   }
 
@@ -25,6 +30,10 @@ public abstract class BasePresenter<V extends IView, I> implements IPresenter<V>
   public void onUnbindView() {
     if (mView != null)
       mView = null;
+
+    if (mSubscribers != null)
+      mSubscribers.clear();
+
   }
 
   protected void noConnectionError() {
@@ -35,5 +44,4 @@ public abstract class BasePresenter<V extends IView, I> implements IPresenter<V>
     }
 
   }
-
 }

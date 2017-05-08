@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.video.youtuberplayer;
+package com.video.youtuberplayer.api;
 
 import android.util.Log;
 
@@ -39,16 +39,20 @@ public class GetFeaturedVideos extends GetYouTubeVideos {
   protected YouTube.Videos.List videosList = null;
 
   @Override
-  public void init() throws IOException {
+  public void init(final long maxResults, final String token, String tokenNextPage) throws IOException {
     videosList = YouTubeAPI.create().videos().list("snippet, statistics, contentDetails");
-    videosList.setFields("items(id, snippet/defaultAudioLanguage, snippet/defaultLanguage, snippet/publishedAt, snippet/title, snippet/channelId, snippet/channelTitle," +
-      "snippet/thumbnails/high, contentDetails/duration, statistics)," +
-      "nextPageToken");
+    videosList.setFields("items(id, snippet/defaultAudioLanguage, snippet/defaultLanguage, snippet/publishedAt, " +
+            "snippet/title, snippet/channelId, snippet/channelTitle," +
+            "snippet/thumbnails/high, contentDetails/duration, statistics)," +
+            "nextPageToken");
     videosList.setKey(YouTubeAPIKey.get().getYouTubeAPIKey());
     videosList.setChart("mostPopular");
     videosList.setRegionCode(getPreferredRegion());
-    videosList.setMaxResults(getMaxResults());
-    nextPageToken = null;
+    videosList.setMaxResults(maxResults);
+    if (token != null) {
+      videosList.setOauthToken(token);
+    }
+    nextPageToken = tokenNextPage;
   }
 
   @Override
@@ -78,6 +82,11 @@ public class GetFeaturedVideos extends GetYouTubeVideos {
     }
 
     return toYouTubeVideoList(searchResultList);
+  }
+
+  @Override
+  public String tokenNextPage() {
+    return nextPageToken;
   }
 
 

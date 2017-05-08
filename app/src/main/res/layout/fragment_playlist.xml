@@ -12,6 +12,16 @@
       android:layout_height="match_parent"
       android:orientation="vertical">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/highlights_keywords_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|center_horizontal"
+        android:layout_marginBottom="@dimen/margin_default_medium"
+        android:layout_marginTop="@dimen/margin_default_medium"
+        android:minHeight="@dimen/destaques_min_height"
+        android:paddingLeft="16dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,7 +29,7 @@
         android:orientation="vertical">
 
       <com.balysv.materialripple.MaterialRippleLayout
-          android:id="@+id/movie_releasing_week_riple"
+          android:id="@+id/more_recently"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           app:mrl_rippleColor="@color/colorAccent"
@@ -50,7 +60,7 @@
       </com.balysv.materialripple.MaterialRippleLayout>
 
       <FrameLayout
-          android:id="@+id/container_releasing_week_movies"
+          android:id="@+id/container_recently"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:minHeight="@dimen/recycler_view_min_height"/>
@@ -107,7 +117,7 @@
       </com.balysv.materialripple.MaterialRippleLayout>
 
       <FrameLayout
-          android:id="@+id/container_popular_movies"
+          android:id="@+id/container_trending"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:minHeight="@dimen/recycler_view_min_height"/>
@@ -151,7 +161,7 @@
       </com.balysv.materialripple.MaterialRippleLayout>
 
       <FrameLayout
-          android:id="@+id/container_now_playing_movies"
+          android:id="@+id/container_recome"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:minHeight="@dimen/recycler_view_min_height"/>

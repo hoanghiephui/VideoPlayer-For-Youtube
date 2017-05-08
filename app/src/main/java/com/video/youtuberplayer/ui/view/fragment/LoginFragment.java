@@ -2,7 +2,6 @@ package com.video.youtuberplayer.ui.view.fragment;
 
 import android.Manifest;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -16,7 +15,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.AppCompatButton;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -37,7 +35,6 @@ import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.gson.Gson;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.model.Account;
-import com.video.youtuberplayer.ui.view.activity.MainActivity;
 import com.video.youtuberplayer.ui.view.activity.SplashActivity;
 import com.video.youtuberplayer.ui.view.widget.SplashVideoView;
 import com.video.youtuberplayer.utils.PrefsUtils;
@@ -72,7 +69,8 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
   static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
   private static final String PREF_ACCOUNT_NAME = "accountName";
-  private static final String[] SCOPES = {YouTubeScopes.YOUTUBE};
+  private static final String[] SCOPES = {YouTubeScopes.YOUTUBE, YouTubeScopes.YOUTUBE_FORCE_SSL, YouTubeScopes.YOUTUBE_UPLOAD,
+          YouTubeScopes.YOUTUBEPARTNER, YouTubeScopes.YOUTUBEPARTNER_CHANNEL_AUDIT};
 
   @BindView(R.id.login_google_button)
   AppCompatButton mCallApiButton;
@@ -108,8 +106,8 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
     mProgress.setMessage("Calling YouTube Data API ...");
     // Initialize credentials and service object.
     mCredential = GoogleAccountCredential.usingOAuth2(
-      getContext().getApplicationContext(), Arrays.asList(SCOPES))
-      .setBackOff(new ExponentialBackOff());
+            getContext().getApplicationContext(), Arrays.asList(SCOPES))
+            .setBackOff(new ExponentialBackOff());
   }
 
   @Override
@@ -196,25 +194,25 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
   @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
   private void chooseAccount() {
     if (EasyPermissions.hasPermissions(
-      getActivity(), Manifest.permission.GET_ACCOUNTS)) {
+            getActivity(), Manifest.permission.GET_ACCOUNTS)) {
       String accountName = getActivity().getPreferences(Context.MODE_PRIVATE)
-        .getString(PREF_ACCOUNT_NAME, null);
+              .getString(PREF_ACCOUNT_NAME, null);
       if (accountName != null) {
         mCredential.setSelectedAccountName(accountName);
         getResultsFromApi();
       } else {
         // Start a dialog from which the user can choose an account
         startActivityForResult(
-          mCredential.newChooseAccountIntent(),
-          REQUEST_ACCOUNT_PICKER);
+                mCredential.newChooseAccountIntent(),
+                REQUEST_ACCOUNT_PICKER);
       }
     } else {
       // Request the GET_ACCOUNTS permission via a user dialog
       EasyPermissions.requestPermissions(
-        this,
-        "This app needs to access your Google account (via Contacts).",
-        REQUEST_PERMISSION_GET_ACCOUNTS,
-        Manifest.permission.GET_ACCOUNTS);
+              this,
+              "This app needs to access your Google account (via Contacts).",
+              REQUEST_PERMISSION_GET_ACCOUNTS,
+              Manifest.permission.GET_ACCOUNTS);
     }
   }
 
@@ -231,25 +229,25 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
    */
   @Override
   public void onActivityResult(
-    int requestCode, int resultCode, Intent data) {
+          int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     switch (requestCode) {
       case REQUEST_GOOGLE_PLAY_SERVICES:
         if (resultCode != RESULT_OK) {
           showSnackToast(coordinatorLayout, "This app requires Google Play Services. " +
-            "Please install Google Play Services on your device and relaunch this app.");
+                  "Please install Google Play Services on your device and relaunch this app.");
         } else {
           getResultsFromApi();
         }
         break;
       case REQUEST_ACCOUNT_PICKER:
         if (resultCode == RESULT_OK && data != null &&
-          data.getExtras() != null) {
+                data.getExtras() != null) {
           String accountName =
-            data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                  data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
           if (accountName != null) {
             SharedPreferences settings =
-              getActivity().getPreferences(Context.MODE_PRIVATE);
+                    getActivity().getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = settings.edit();
             editor.putString(PREF_ACCOUNT_NAME, accountName);
             editor.apply();
@@ -281,7 +279,7 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
                                          @NonNull int[] grantResults) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     EasyPermissions.onRequestPermissionsResult(
-      requestCode, permissions, grantResults, this);
+            requestCode, permissions, grantResults, this);
   }
 
   /**
@@ -317,7 +315,7 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
    */
   private boolean isDeviceOnline() {
     ConnectivityManager connMgr =
-      (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
     return (networkInfo != null && networkInfo.isConnected());
   }
@@ -330,9 +328,9 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
    */
   private boolean isGooglePlayServicesAvailable() {
     GoogleApiAvailability apiAvailability =
-      GoogleApiAvailability.getInstance();
+            GoogleApiAvailability.getInstance();
     final int connectionStatusCode =
-      apiAvailability.isGooglePlayServicesAvailable(getContext());
+            apiAvailability.isGooglePlayServicesAvailable(getContext());
     return connectionStatusCode == ConnectionResult.SUCCESS;
   }
 
@@ -342,9 +340,9 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
    */
   private void acquireGooglePlayServices() {
     GoogleApiAvailability apiAvailability =
-      GoogleApiAvailability.getInstance();
+            GoogleApiAvailability.getInstance();
     final int connectionStatusCode =
-      apiAvailability.isGooglePlayServicesAvailable(getContext());
+            apiAvailability.isGooglePlayServicesAvailable(getContext());
     if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
       showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
     }
@@ -359,12 +357,12 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
    *                             Google Play Services on this device.
    */
   void showGooglePlayServicesAvailabilityErrorDialog(
-    final int connectionStatusCode) {
+          final int connectionStatusCode) {
     GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
     Dialog dialog = apiAvailability.getErrorDialog(
-      getActivity(),
-      connectionStatusCode,
-      REQUEST_GOOGLE_PLAY_SERVICES);
+            getActivity(),
+            connectionStatusCode,
+            REQUEST_GOOGLE_PLAY_SERVICES);
     dialog.show();
   }
 
@@ -380,9 +378,9 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
       HttpTransport transport = AndroidHttp.newCompatibleTransport();
       JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
       mService = new com.google.api.services.youtube.YouTube.Builder(
-        transport, jsonFactory, credential)
-        .setApplicationName(getString(R.string.app_name))
-        .build();
+              transport, jsonFactory, credential)
+              .setApplicationName(getString(R.string.app_name))
+              .build();
     }
 
     /**
@@ -394,10 +392,10 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
     protected List<String> doInBackground(Void... params) {
       try {
         String account = new Gson().toJson(new Account(mCredential.getSelectedAccount().name,
-          mCredential.getToken(), mCredential.getScope()));
+                mCredential.getToken(), mCredential.getScope()));
         PrefsUtils.saveAccount(getContext(), account);
         Log.d(TAG, "getResultsFromApi: " + mCredential.getScope() + " | " + mCredential.getToken()
-          + " | " + mCredential.getSelectedAccount().name);
+                + " | " + mCredential.getSelectedAccount().name);
       } catch (IOException | GoogleAuthException e) {
         e.printStackTrace();
       }
@@ -420,14 +418,14 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
       // Get a list of up to 10 files.
       List<String> channelInfo = new ArrayList<String>();
       ChannelListResponse result = mService.channels().list("snippet,contentDetails,statistics")
-        .setForUsername("GoogleDevelopers")
-        .execute();
+              .setForUsername("GoogleDevelopers")
+              .execute();
       List<Channel> channels = result.getItems();
       if (channels != null) {
         Channel channel = channels.get(0);
         channelInfo.add("This channel's ID is " + channel.getId() + ". " +
-          "Its title is '" + channel.getSnippet().getTitle() + ", " +
-          "and it has " + channel.getStatistics().getViewCount() + " views.");
+                "Its title is '" + channel.getSnippet().getTitle() + ", " +
+                "and it has " + channel.getStatistics().getViewCount() + " views.");
       }
       return channelInfo;
     }
@@ -449,7 +447,7 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
       } else {
         output.add(0, "Data retrieved using the YouTube Data API:");
         //showSnackToast(coordinatorLayout, TextUtils.join("\n", output));
-        SplashActivity activity = ((SplashActivity)getActivity());
+        SplashActivity activity = ((SplashActivity) getActivity());
         if (activity != null) {
           activity.onOpenMain();
         }
@@ -462,15 +460,15 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
       if (mLastError != null) {
         if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
           showGooglePlayServicesAvailabilityErrorDialog(
-            ((GooglePlayServicesAvailabilityIOException) mLastError)
-              .getConnectionStatusCode());
+                  ((GooglePlayServicesAvailabilityIOException) mLastError)
+                          .getConnectionStatusCode());
         } else if (mLastError instanceof UserRecoverableAuthIOException) {
           startActivityForResult(
-            ((UserRecoverableAuthIOException) mLastError).getIntent(),
-            REQUEST_AUTHORIZATION);
+                  ((UserRecoverableAuthIOException) mLastError).getIntent(),
+                  REQUEST_AUTHORIZATION);
         } else {
           showSnackToast(coordinatorLayout, "The following error occurred:\n"
-            + mLastError.getMessage());
+                  + mLastError.getMessage());
         }
       } else {
         showSnackToast(coordinatorLayout, "Request cancelled.");

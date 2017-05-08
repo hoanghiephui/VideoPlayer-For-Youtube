@@ -18,6 +18,7 @@
 package com.video.youtuberplayer.model;
 
 import com.google.api.services.youtube.model.Activity;
+import com.google.api.services.youtube.model.GuideCategory;
 import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.VideoPlayerApplication;
@@ -30,10 +31,10 @@ import java.util.List;
 /**
  * Returns a list of YouTube videos.
  * <p>
- * <p>Do not run this directly, but rather use {@link GetYouTubeVideosTask}.</p>
+ * <p>Do not run this directly, but rather use {@link }.</p>
  */
 public abstract class GetYouTubeVideos {
-  protected String nextPageToken = null;
+  protected String nextPageToken;
   protected boolean noMoreVideoPages = false;
 
   /**
@@ -41,8 +42,11 @@ public abstract class GetYouTubeVideos {
    *
    * @throws IOException
    */
-  public abstract void init() throws IOException;
+  public abstract void init(long maxResults, final String token, final String tokenNextPage) throws IOException;
 
+  public void initGuideCategories(String regionCode, String hl, String token) throws IOException{
+
+  }
 
   /**
    * Sets user's query. [optional]
@@ -57,6 +61,8 @@ public abstract class GetYouTubeVideos {
    * @return List of {@link YouTubeVideo}s.
    */
   public abstract List<YouTubeVideo> getNextVideos();
+
+  public abstract String tokenNextPage();
 
 
   /**
@@ -102,5 +108,9 @@ public abstract class GetYouTubeVideos {
   public void reset() {
     nextPageToken = null;
     noMoreVideoPages = false;
+  }
+
+  public List<GuideCategory> listGuideCategories() {
+    return null;
   }
 }

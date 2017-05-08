@@ -86,5 +86,8 @@
   <string name="copy">© 2017 by Living Solutions</string>
   <string name="login_google_description">Login with Google</string>
   <string name="login_google_title">Login with Google</string>
+  <string name="no_video_find">No videos found</string>
+  <string name="download">Download</string>
+  <string name="popup">Show popup</string>
 
 </resources>

@@ -18,7 +18,7 @@
     android:layout_height="@dimen/destaques_min_height"
     android:gravity="center"
     android:text="@string/more"
-    android:textColor="@android:color/white"
+    android:textColor="@color/primary_text"
     android:textSize="@dimen/txt_size_medium"
     app:typeface="roboto_thin"/>
 

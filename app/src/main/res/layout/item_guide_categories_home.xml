@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+  <com.balysv.materialripple.MaterialRippleLayout
+      android:id="@+id/movie_deails_item_default_riple"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="@dimen/margin_default_medium"
+      android:background="@drawable/background_item_words_home_color_primary"
+      android:paddingLeft="@dimen/margin_default_medium"
+      android:paddingRight="@dimen/margin_default_medium"
+      app:mrl_rippleColor="@color/colorPrimaryDark"
+      app:mrl_rippleOverlay="true">
+
+    <com.devspark.robototextview.widget.RobotoTextView
+        android:id="@+id/movie_deails_item_default_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/destaques_min_height"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/txt_size_medium"
+        app:typeface="roboto_condensed_light"/>
+
+  </com.balysv.materialripple.MaterialRippleLayout>
+
+</LinearLayout>

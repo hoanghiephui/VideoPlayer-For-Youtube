@@ -71,4 +71,17 @@
     <item name="android:layout_marginBottom">@dimen/margin_default_min</item>
   </style>
 
+  <style name="GridDetailsTextView" parent="GridTextView">
+    <item name="android:textColor">@color/video_cell_text_details</item>
+    <item name="android:singleLine">true</item>
+    <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+  </style>
+
+  <style name="GridTextView" parent="AppTheme">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+    <item name="android:textColor">@color/video_cell_text_main</item>
+    <item name="android:background">@color/video_cell_background</item>
+  </style>
 </resources>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16dp"
+    android:orientation="vertical">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="?actionBarSize"
+      android:gravity="center"
+      android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+      <com.devspark.robototextview.widget.RobotoTextView
+          android:id="@+id/title"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:ellipsize="marquee"
+          android:gravity="center_vertical"
+          android:marqueeRepeatLimit="marquee_forever"
+          android:maxLines="1"
+          android:text="dsdsd"
+          app:typeface="roboto_black"/>
+
+      <com.devspark.robototextview.widget.RobotoTextView
+          android:id="@+id/count_view"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="4dp"
+          android:ellipsize="marquee"
+          android:gravity="center_vertical"
+          android:marqueeRepeatLimit="marquee_forever"
+          android:maxLines="1"
+          android:text="dsdsd"
+          android:textSize="11dp"
+          app:typeface="roboto_light"/>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        app:srcCompat="@drawable/ic_arrow_drop_down_grey_600_24dp"/>
+  </LinearLayout>
+
+  <!-- CONTROLS -->
+  <LinearLayout
+      android:id="@+id/detail_controls_root"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      tools:ignore="RtlHardcoded">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+      <android.support.v7.widget.AppCompatImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_thumb_up_vector"/>
+
+      <com.devspark.robototextview.widget.RobotoTextView
+          android:id="@+id/detail_like"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="?attr/selectableItemBackgroundBorderless"
+          android:clickable="true"
+          android:gravity="center"
+          android:paddingBottom="6dp"
+          android:paddingTop="6dp"
+          android:text="1N"
+          android:textSize="12sp"
+          app:typeface="roboto_light"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+      <android.support.v7.widget.AppCompatImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_thumb_down_vector"/>
+
+      <com.devspark.robototextview.widget.RobotoTextView
+          android:id="@+id/detail_dislike"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="?attr/selectableItemBackgroundBorderless"
+          android:clickable="true"
+          android:gravity="center"
+          android:paddingBottom="6dp"
+          android:paddingTop="6dp"
+          android:text="1N"
+          android:textSize="12sp"
+          app:typeface="roboto_light"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+      <android.support.v7.widget.AppCompatImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_cloud_download_grey_600_24dp"/>
+
+      <com.devspark.robototextview.widget.RobotoTextView
+          android:id="@+id/detail_download"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="?attr/selectableItemBackgroundBorderless"
+          android:clickable="true"
+          android:gravity="center"
+          android:paddingBottom="6dp"
+          android:paddingTop="6dp"
+          android:text="@string/download"
+          android:textSize="12sp"
+          app:typeface="roboto_light"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+      <android.support.v7.widget.AppCompatImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_thumb_up_vector"/>
+
+      <com.devspark.robototextview.widget.RobotoTextView
+          android:id="@+id/detail_controls_background"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="?attr/selectableItemBackgroundBorderless"
+          android:clickable="true"
+          android:gravity="center"
+          android:paddingBottom="6dp"
+          android:paddingTop="6dp"
+          android:text="1N"
+          android:textSize="12sp"
+          app:typeface="roboto_light"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="55dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+      <android.support.v7.widget.AppCompatImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_picture_in_picture_grey_600_24dp"/>
+
+      <com.devspark.robototextview.widget.RobotoTextView
+          android:id="@+id/detail_popup"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="?attr/selectableItemBackgroundBorderless"
+          android:clickable="true"
+          android:gravity="center"
+          android:paddingBottom="6dp"
+          android:paddingTop="6dp"
+          android:text="@string/popup"
+          android:textSize="12sp"
+          app:typeface="roboto_light"/>
+    </LinearLayout>
+  </LinearLayout>
+</LinearLayout>

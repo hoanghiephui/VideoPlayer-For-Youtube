@@ -34,6 +34,10 @@ import butterknife.Unbinder;
 public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
   DrawerLayout.DrawerListener {
 
+  public static final int LINEAR_LAYOUT = 0;
+  public static final int GRID_LAYOUT = 1;
+  public static final int STAGGERED = 2;
+
   protected Unbinder mBinder;
   protected Snackbar mSnackbar;
   @Nullable
