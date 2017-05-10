@@ -21,6 +21,7 @@ import com.video.youtuberplayer.ui.view.activity.ListDefaultActivity;
 import com.video.youtuberplayer.ui.view.adapters.GuideCategoriesAdapter;
 import com.video.youtuberplayer.utils.PrefsUtils;
 
+import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
@@ -57,7 +58,11 @@ public class MainFragment extends BaseFragment implements GuideCategoriesContrac
     presenter.onBindView(this);
     Account account = new Gson().fromJson(PrefsUtils.getAccount(getContext()), Account.class);
 
-    presenter.getGuideCategories(VideoCategory.GUIDECATEGORIES, "VN", "vi-VN", account.getToken());
+    try {
+      presenter.getGuideCategories(VideoCategory.GUIDECATEGORIES, "VN", "vi-VN", account.getToken());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     mHighlightsKeywordsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayout.HORIZONTAL, false));
   }
 

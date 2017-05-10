@@ -4,6 +4,8 @@ import com.video.youtuberplayer.model.GetYouTubeVideos;
 import com.video.youtuberplayer.model.VideoCategory;
 import com.video.youtuberplayer.ui.contracts.GuideCategoriesContract;
 
+import java.io.IOException;
+
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
@@ -23,7 +25,7 @@ public class GetGuideCategoriesPresenter extends BasePresenter<GuideCategoriesCo
   }
 
   @Override
-  public void getGuideCategories(VideoCategory videoCategory, String regionCode, String hl, String token) {
+  public void getGuideCategories(VideoCategory videoCategory, String regionCode, String hl, String token) throws IOException {
     mInterceptor.getGuideCategories(videoCategory, regionCode, hl, token)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

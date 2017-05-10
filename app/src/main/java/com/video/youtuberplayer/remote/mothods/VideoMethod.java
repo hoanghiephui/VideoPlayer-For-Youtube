@@ -26,19 +26,21 @@ import io.reactivex.internal.operators.observable.ObservableJust;
  */
 
 public class VideoMethod {
-  public Observable<GetYouTubeVideos> getFeaturedVideo(VideoCategory videoCategory, final long maxResults, final String token, final String tokenNextPage) throws IOException {
+  public Observable<GetYouTubeVideos> getFeaturedVideo(VideoCategory videoCategory, final long maxResults, final String token,
+                                                       final String tokenNextPage) throws IOException {
     return Observable
-            .just(videoCategory.createGetYouTubeVideos())
-            .doOnNext(new Consumer<GetYouTubeVideos>() {
+            .just(videoCategory.createGetYouTubeVideos(maxResults, token, tokenNextPage))
+            /*.doOnNext(new Consumer<GetYouTubeVideos>() {
               @Override
               public void accept(@NonNull GetYouTubeVideos videos) throws Exception {
                 videos.init(maxResults, token, tokenNextPage);
               }
-            });
+            })*/;
   }
 
-  public Observable<GetYouTubeVideos> getGuideCategories(VideoCategory videoCategory, final String regionCode, final String hl, final String token) {
-    return Observable.just(videoCategory.createGetYouTubeVideos())
+  public Observable<GetYouTubeVideos> getGuideCategories(VideoCategory videoCategory, final String regionCode,
+                                                         final String hl, final String token) throws IOException {
+    return Observable.just(videoCategory.createGetYouTubeVideos(0, "", ""))
             .doAfterNext(new Consumer<GetYouTubeVideos>() {
               @Override
               public void accept(@NonNull GetYouTubeVideos videos) throws Exception {

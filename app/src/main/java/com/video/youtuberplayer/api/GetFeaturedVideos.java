@@ -38,6 +38,22 @@ public class GetFeaturedVideos extends GetYouTubeVideos {
   private static final String TAG = GetFeaturedVideos.class.getSimpleName();
   protected YouTube.Videos.List videosList = null;
 
+  public GetFeaturedVideos(final long maxResults, final String token, String tokenNextPage) throws IOException{
+    videosList = YouTubeAPI.create().videos().list("snippet, statistics, contentDetails");
+    videosList.setFields("items(id, snippet/defaultAudioLanguage, snippet/defaultLanguage, snippet/publishedAt, " +
+            "snippet/title, snippet/channelId, snippet/channelTitle," +
+            "snippet/thumbnails/high, contentDetails/duration, statistics)," +
+            "nextPageToken");
+    videosList.setKey(YouTubeAPIKey.get().getYouTubeAPIKey());
+    videosList.setChart("mostPopular");
+    videosList.setRegionCode(getPreferredRegion());
+    videosList.setMaxResults(maxResults);
+    if (token != null) {
+      videosList.setOauthToken(token);
+    }
+    nextPageToken = tokenNextPage;
+  }
+
   @Override
   public void init(final long maxResults, final String token, String tokenNextPage) throws IOException {
     videosList = YouTubeAPI.create().videos().list("snippet, statistics, contentDetails");

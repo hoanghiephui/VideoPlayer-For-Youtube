@@ -6,6 +6,7 @@ import com.video.youtuberplayer.model.VideoCategory;
 import com.video.youtuberplayer.ui.presenter.IPresenter;
 import com.video.youtuberplayer.ui.view.IView;
 
+import java.io.IOException;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -17,7 +18,7 @@ import io.reactivex.Observable;
 public class GuideCategoriesContract {
 
   public interface IGuideCategoriesInterceptor {
-    Observable<GetYouTubeVideos> getGuideCategories(VideoCategory videoCategory, final String regionCode, final String hl, final String token);
+    Observable<GetYouTubeVideos> getGuideCategories(VideoCategory videoCategory, final String regionCode, final String hl, final String token) throws IOException;
   }
 
   public interface IGuideCategoriesView extends IView {
@@ -25,6 +26,6 @@ public class GuideCategoriesContract {
   }
 
   public interface IGuideCategoriesPresenter extends IPresenter<IGuideCategoriesView> {
-    void getGuideCategories(VideoCategory videoCategory, final String regionCode, final String hl, final String token);
+    void getGuideCategories(VideoCategory videoCategory, final String regionCode, final String hl, final String token) throws IOException;
   }
 }

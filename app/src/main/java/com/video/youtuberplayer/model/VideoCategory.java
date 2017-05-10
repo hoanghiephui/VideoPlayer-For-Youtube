@@ -9,6 +9,8 @@ import android.util.Log;
 import com.video.youtuberplayer.api.GetFeaturedVideos;
 import com.video.youtuberplayer.api.GetGuideCategories;
 
+import java.io.IOException;
+
 /**
  * Represents a video category/group.
  */
@@ -66,19 +68,20 @@ public enum VideoCategory {
    *
    * @return New instance of {@link GetYouTubeVideos}.
    */
-  public GetYouTubeVideos createGetYouTubeVideos() {
+  public GetYouTubeVideos createGetYouTubeVideos(final long maxResults, final String token,
+                                                 final String tokenNextPage) throws IOException {
     if (id == FEATURED.id)
-      return new GetFeaturedVideos();
+      return new GetFeaturedVideos(maxResults, token, tokenNextPage);
     else if (id == MOST_POPULAR.id)
-      return new GetFeaturedVideos();
+      return new GetFeaturedVideos(maxResults, token, tokenNextPage);
     else if (id == SEARCH_QUERY.id)
-      return new GetFeaturedVideos();
+      return new GetFeaturedVideos(maxResults, token, tokenNextPage);
     else if (id == CHANNEL_VIDEOS.id)
-      return new GetFeaturedVideos();
+      return new GetFeaturedVideos(maxResults, token, tokenNextPage);
     else if (id == SUBSCRIPTIONS_FEED_VIDEOS.id)
-      return new GetFeaturedVideos();
+      return new GetFeaturedVideos(maxResults, token, tokenNextPage);
     else if (id == BOOKMARKS_VIDEOS.id)
-      return new GetFeaturedVideos();
+      return new GetFeaturedVideos(maxResults, token, tokenNextPage);
     else if (id == GUIDECATEGORIES.id) {
       return new GetGuideCategories();
     }
