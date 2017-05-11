@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.video.youtuberplayer.api.GetFeaturedVideos;
 import com.video.youtuberplayer.api.GetGuideCategories;
+import com.video.youtuberplayer.api.GetVideoDetail;
+import com.video.youtuberplayer.api.base.BaseVideoDetail;
 
 import java.io.IOException;
 
@@ -27,7 +29,8 @@ public enum VideoCategory {
   SUBSCRIPTIONS_FEED_VIDEOS (4),
   /** Videos bookmarked by the user */
   BOOKMARKS_VIDEOS (5),
-  GUIDECATEGORIES(6);
+  GUIDECATEGORIES(6),
+  VIDEODETAIL(7);
 
   // *****************
   // DON'T FORGET to update getVideoCategory() and createGetYouTubeVideos() methods...
@@ -88,5 +91,9 @@ public enum VideoCategory {
 
     // this will notify the developer is he forgot to amend this method when a new type is added
     throw new UnsupportedOperationException();
+  }
+
+  public BaseVideoDetail getVideoDetail(final String token, final String id) throws IOException {
+    return new GetVideoDetail(token, id);
   }
 }

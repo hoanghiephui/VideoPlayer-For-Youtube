@@ -27,7 +27,7 @@
       <RelativeLayout
         android:id="@+id/detail_thumbnail_root_layout"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="200dp"
         android:fitsSystemWindows="true">
 
         <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
@@ -85,6 +85,7 @@
           android:layout_alignParentBottom="true"
           android:gravity="center"
           android:orientation="horizontal"
+          android:background="@drawable/player_controls_bg"
           android:paddingLeft="16dp"
           android:paddingRight="16dp">
 

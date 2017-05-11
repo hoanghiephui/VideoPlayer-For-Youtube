@@ -65,6 +65,7 @@ public abstract class GetYouTubeVideos {
   public abstract String tokenNextPage();
 
 
+
   /**
    * @return True if YouTube states that there will be no more video pages; false otherwise.
    */

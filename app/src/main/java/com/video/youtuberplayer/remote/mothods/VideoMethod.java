@@ -1,25 +1,15 @@
 package com.video.youtuberplayer.remote.mothods;
 
-import com.google.api.services.youtube.YouTube;
-import com.video.youtuberplayer.api.GetFeaturedVideos;
-import com.video.youtuberplayer.api.GetGuideCategories;
+import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.model.GetYouTubeVideos;
 import com.video.youtuberplayer.model.VideoCategory;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
-import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.internal.operators.observable.ObservableJust;
 
 /**
  * Created by hoanghiep on 5/5/17.
@@ -29,13 +19,7 @@ public class VideoMethod {
   public Observable<GetYouTubeVideos> getFeaturedVideo(VideoCategory videoCategory, final long maxResults, final String token,
                                                        final String tokenNextPage) throws IOException {
     return Observable
-            .just(videoCategory.createGetYouTubeVideos(maxResults, token, tokenNextPage))
-            /*.doOnNext(new Consumer<GetYouTubeVideos>() {
-              @Override
-              public void accept(@NonNull GetYouTubeVideos videos) throws Exception {
-                videos.init(maxResults, token, tokenNextPage);
-              }
-            })*/;
+            .just(videoCategory.createGetYouTubeVideos(maxResults, token, tokenNextPage));
   }
 
   public Observable<GetYouTubeVideos> getGuideCategories(VideoCategory videoCategory, final String regionCode,
@@ -47,6 +31,10 @@ public class VideoMethod {
                 videos.initGuideCategories(regionCode, hl, token);
               }
             });
+  }
+
+  public Observable<List<Video>> getVideoDetail(VideoCategory videoCategory, final String token, final String id) throws IOException {
+    return Observable.just(videoCategory.getVideoDetail(token, id).getVideoDetail());
   }
 
   /*try {

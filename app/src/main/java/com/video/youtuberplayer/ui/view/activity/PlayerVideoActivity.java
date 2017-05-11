@@ -1,20 +1,48 @@
 package com.video.youtuberplayer.ui.view.activity;
 
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatImageView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.devspark.robototextview.widget.RobotoTextView;
 import com.github.rubensousa.bottomsheetbuilder.BottomSheetBuilder;
 import com.github.rubensousa.bottomsheetbuilder.BottomSheetMenuDialog;
 import com.github.rubensousa.bottomsheetbuilder.adapter.BottomSheetItemClickListener;
+import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.R;
+import com.video.youtuberplayer.model.VideoCategory;
+import com.video.youtuberplayer.model.VideoDuration;
+import com.video.youtuberplayer.ui.contracts.GetVideoDetailContract;
+import com.video.youtuberplayer.ui.interceptor.GetVideoDetailInterceptor;
+import com.video.youtuberplayer.ui.presenter.GetVideoDetailPresenter;
+
+import java.io.IOException;
+import java.util.List;
+
+import butterknife.BindView;
+import io.reactivex.disposables.CompositeDisposable;
+
+import static com.video.youtuberplayer.utils.ViewUtils.onShowImage;
 
 /**
  * Created by hoanghiep on 5/7/17.
  */
 
-public class PlayerVideoActivity extends BaseActivity {
+public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailContract.IGetVideoDetailView {
+  private static final String TAG = PlayerVideoActivity.class.getSimpleName();
+
+  @BindView(R.id.playbackCurrentTime)
+  RobotoTextView playbackCurrentTime;
+  @BindView(R.id.playbackEndTime)
+  RobotoTextView playbackEndTime;
+  @BindView(R.id.detail_thumbnail_image_view)
+  AppCompatImageView thumbnailVideo;
+
+  private GetVideoDetailContract.IGetVideoDetailPresenter presenter;
+  private GetVideoDetailContract.IGetVideoDetailInterceptor interceptor;
   @Override
   protected int getActivityBaseViewID() {
     return R.layout.activity_player_video;
@@ -26,6 +54,15 @@ public class PlayerVideoActivity extends BaseActivity {
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
       WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+    interceptor = new GetVideoDetailInterceptor();
+    presenter = new GetVideoDetailPresenter(interceptor, new CompositeDisposable());
+    presenter.onBindView(this);
+
+    try {
+      presenter.getVideoDetail(VideoCategory.VIDEODETAIL, null, "rWcSrLrmVw4");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -71,5 +108,25 @@ public class PlayerVideoActivity extends BaseActivity {
       .createDialog();
 
     dialog.show();
+  }
+
+  @Override
+  public void setProgressVisibility(int visibityState) {
+
+  }
+
+  @Override
+  public boolean isAdded() {
+    return false;
+  }
+
+  @Override
+  public void onUpdateView(List<Video> videoList) {
+    for (Video video : videoList) {
+      playbackEndTime.setText(VideoDuration.toHumanReadableString(video.getContentDetails().getDuration()));
+      onShowImage(thumbnailVideo, video.getSnippet().getThumbnails().getHigh().getUrl());
+    }
+
+    Log.d(TAG, "onUpdateView: " + videoList.get(0).getSnippet().getTitle());
   }
 }
