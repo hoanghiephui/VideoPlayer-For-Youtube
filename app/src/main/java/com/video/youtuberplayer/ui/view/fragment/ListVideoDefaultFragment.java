@@ -232,9 +232,8 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
   }
 
   @Override
-  public void addAllVideo(List<YouTubeVideo> nextVideos, boolean hasMorePage) {
+  public void addAllVideo(List<YouTubeVideo> nextVideos) {
     mlistVideo.addAll(nextVideos);
-    this.hasMorePages = hasMorePage;
   }
 
   @Override

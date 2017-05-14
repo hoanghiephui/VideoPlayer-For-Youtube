@@ -2,6 +2,8 @@ package com.video.youtuberplayer.ui.view.activity;
 
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +20,10 @@ import com.video.youtuberplayer.model.VideoDuration;
 import com.video.youtuberplayer.ui.contracts.GetVideoDetailContract;
 import com.video.youtuberplayer.ui.interceptor.GetVideoDetailInterceptor;
 import com.video.youtuberplayer.ui.presenter.GetVideoDetailPresenter;
+import com.video.youtuberplayer.ui.view.adapters.VideoPlayerMoreAdapter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,6 +44,11 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
   RobotoTextView playbackEndTime;
   @BindView(R.id.detail_thumbnail_image_view)
   AppCompatImageView thumbnailVideo;
+  @BindView(R.id.recyclerView)
+  RecyclerView recyclerView;
+
+  private VideoPlayerMoreAdapter adapter;
+  private List<Video> videoList = new ArrayList<>();
 
   private GetVideoDetailContract.IGetVideoDetailPresenter presenter;
   private GetVideoDetailContract.IGetVideoDetailInterceptor interceptor;
@@ -63,6 +72,11 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     } catch (IOException e) {
       e.printStackTrace();
     }
+    adapter = new VideoPlayerMoreAdapter(videoList);
+    recyclerView.setNestedScrollingEnabled(false);
+    recyclerView.setHasFixedSize(true);
+    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    recyclerView.setAdapter(adapter);
   }
 
   @Override
@@ -125,8 +139,11 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     for (Video video : videoList) {
       playbackEndTime.setText(VideoDuration.toHumanReadableString(video.getContentDetails().getDuration()));
       onShowImage(thumbnailVideo, video.getSnippet().getThumbnails().getHigh().getUrl());
-    }
 
+    }
+    this.videoList.addAll(videoList);
+    adapter.setList(this.videoList);
+    adapter.notifyDataSetChanged();
     Log.d(TAG, "onUpdateView: " + videoList.get(0).getSnippet().getTitle());
   }
 }

@@ -92,5 +92,6 @@
   <string name="background">Background</string>
   <string name="quality">Quality</string>
   <string name="next_video_title">Next video</string>
+  <string name="view_count_text">%1$s views</string>
 
 </resources>

@@ -37,6 +37,7 @@ public class GetFeaturedVideos extends GetYouTubeVideos {
 
   private static final String TAG = GetFeaturedVideos.class.getSimpleName();
   protected YouTube.Videos.List videosList = null;
+  private VideoListResponse response;
 
   public GetFeaturedVideos(final long maxResults, final String token, String tokenNextPage) throws IOException{
     videosList = YouTubeAPI.create().videos().list("snippet, statistics, contentDetails");
@@ -51,7 +52,13 @@ public class GetFeaturedVideos extends GetYouTubeVideos {
     if (token != null) {
       videosList.setOauthToken(token);
     }
-    nextPageToken = tokenNextPage;
+    videosList.setPageToken(tokenNextPage);
+    response = videosList.execute();
+    nextPageToken = response.getNextPageToken();
+  }
+
+  public VideoListResponse getResponse() {
+    return response;
   }
 
   @Override
@@ -68,6 +75,7 @@ public class GetFeaturedVideos extends GetYouTubeVideos {
     if (token != null) {
       videosList.setOauthToken(token);
     }
+    response = videosList.execute();
     nextPageToken = tokenNextPage;
   }
 

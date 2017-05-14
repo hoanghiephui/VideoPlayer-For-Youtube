@@ -26,4 +26,8 @@ public class GetRelatedVideos {
             .setPageToken(tokenPage);
     videoList = list.execute().getItems();
   }
+
+  public List<SearchResult> getVideoList() {
+    return videoList;
+  }
 }

@@ -2,11 +2,16 @@ package com.video.youtuberplayer.ui.presenter;
 
 import android.view.View;
 
+import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoListResponse;
 import com.video.youtuberplayer.model.GetYouTubeVideos;
 import com.video.youtuberplayer.model.VideoCategory;
+import com.video.youtuberplayer.model.YouTubeVideo;
 import com.video.youtuberplayer.ui.contracts.GetFeaturedVideoContract;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observer;
@@ -32,7 +37,7 @@ public class GetFraturedViewPresenter extends BasePresenter<GetFeaturedVideoCont
     mView.setProgressVisibility(View.VISIBLE);
     if (mView.isInternetConnected()) {
       mInterceptor.getFeaturedVideo(videos, maxResults, token, tokenNextPage)
-              .delay(2000, TimeUnit.MILLISECONDS)
+              .delay(500, TimeUnit.MILLISECONDS)
               .subscribeOn(Schedulers.newThread())
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe(onGetFeatured());
@@ -42,20 +47,20 @@ public class GetFraturedViewPresenter extends BasePresenter<GetFeaturedVideoCont
 
   }
 
-  private Observer<GetYouTubeVideos> onGetFeatured() {
-    return new Observer<GetYouTubeVideos>() {
+  private Observer<VideoListResponse> onGetFeatured() {
+    return new Observer<VideoListResponse>() {
       @Override
       public void onSubscribe(@NonNull Disposable d) {
         mSubscribers.add(d);
       }
 
       @Override
-      public void onNext(@NonNull GetYouTubeVideos videos) {
+      public void onNext(@NonNull VideoListResponse videos) {
         if (videos != null) {
-          mView.addAllVideo(videos.getNextVideos(), videos.noMoreVideoPages());
+          mView.addAllVideo(toYouTubeVideoList(videos.getItems()));
           mView.onUpdateView();
-          if (videos.tokenNextPage() != null) {
-            mView.setTokenNextPage(videos.tokenNextPage());
+          if (videos.getNextPageToken()!= null) {
+            mView.setTokenNextPage(videos.getNextPageToken());
           }
           mView.setRecyclerViewVisibility(View.VISIBLE);
           mView.setProgressVisibility(View.GONE);
@@ -76,5 +81,21 @@ public class GetFraturedViewPresenter extends BasePresenter<GetFeaturedVideoCont
 
       }
     };
+  }
+
+  protected List<YouTubeVideo> toYouTubeVideoList(List<Video> videoList) {
+    List<YouTubeVideo> youTubeVideoList = new ArrayList<>();
+
+    if (videoList != null) {
+      YouTubeVideo youTubeVideo;
+
+      for (Video video : videoList) {
+        youTubeVideo = new YouTubeVideo(video);
+        if (!youTubeVideo.filterVideoByLanguage())
+          youTubeVideoList.add(youTubeVideo);
+      }
+    }
+
+    return youTubeVideoList;
   }
 }

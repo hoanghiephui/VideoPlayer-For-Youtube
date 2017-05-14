@@ -132,7 +132,7 @@ public class TrendingFragment extends BaseFragment implements GetFeaturedVideoCo
   }
 
   @Override
-  public void addAllVideo(List<YouTubeVideo> nextVideos, boolean hasMorePage) {
+  public void addAllVideo(List<YouTubeVideo> nextVideos) {
 
   }
 

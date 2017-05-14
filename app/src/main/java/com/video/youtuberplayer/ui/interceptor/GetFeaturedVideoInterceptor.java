@@ -1,11 +1,14 @@
 package com.video.youtuberplayer.ui.interceptor;
 
+import com.google.api.services.youtube.model.VideoListResponse;
 import com.video.youtuberplayer.model.GetYouTubeVideos;
 import com.video.youtuberplayer.model.VideoCategory;
+import com.video.youtuberplayer.model.YouTubeVideo;
 import com.video.youtuberplayer.remote.mothods.VideoMethod;
 import com.video.youtuberplayer.ui.contracts.GetFeaturedVideoContract;
 
 import java.io.IOException;
+import java.util.List;
 
 import io.reactivex.Observable;
 
@@ -21,7 +24,7 @@ public class GetFeaturedVideoInterceptor implements GetFeaturedVideoContract.IGe
   }
 
   @Override
-  public Observable<GetYouTubeVideos> getFeaturedVideo(VideoCategory videos, long maxResults, String token, String tokenNextPage) throws IOException {
+  public Observable<VideoListResponse> getFeaturedVideo(VideoCategory videos, long maxResults, String token, String tokenNextPage) throws IOException {
     return videoMethod.getFeaturedVideo(videos, maxResults, token, tokenNextPage);
   }
 }

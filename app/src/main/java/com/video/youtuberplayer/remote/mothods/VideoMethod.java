@@ -1,8 +1,15 @@
 package com.video.youtuberplayer.remote.mothods;
 
+import com.google.api.services.youtube.model.ChannelListResponse;
+import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoListResponse;
+import com.video.youtuberplayer.api.GetChannel;
+import com.video.youtuberplayer.api.GetFeaturedVideos;
+import com.video.youtuberplayer.api.GetRelatedVideos;
 import com.video.youtuberplayer.model.GetYouTubeVideos;
 import com.video.youtuberplayer.model.VideoCategory;
+import com.video.youtuberplayer.model.YouTubeVideo;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,16 +17,17 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
+import io.reactivex.internal.operators.observable.ObservableFlatMap;
 
 /**
  * Created by hoanghiep on 5/5/17.
  */
 
 public class VideoMethod {
-  public Observable<GetYouTubeVideos> getFeaturedVideo(VideoCategory videoCategory, final long maxResults, final String token,
-                                                       final String tokenNextPage) throws IOException {
+  public Observable<VideoListResponse> getFeaturedVideo(VideoCategory videoCategory, final long maxResults, final String token,
+                                                        final String tokenNextPage) throws IOException {
     return Observable
-            .just(videoCategory.createGetYouTubeVideos(maxResults, token, tokenNextPage));
+            .just(new GetFeaturedVideos(maxResults, token, tokenNextPage).getResponse());
   }
 
   public Observable<GetYouTubeVideos> getGuideCategories(VideoCategory videoCategory, final String regionCode,
@@ -37,6 +45,13 @@ public class VideoMethod {
     return Observable.just(videoCategory.getVideoDetail(token, id).getVideoDetail());
   }
 
+  public Observable<List<SearchResult>> getRelatedVideos(String id, String token, String tokenPage) throws IOException {
+    return Observable.just(new GetRelatedVideos(id, token, tokenPage).getVideoList());
+  }
+
+  public Observable<ChannelListResponse> getChannelYoutube(String id) throws IOException {
+    return Observable.just(new GetChannel(id).getResponse());
+  }
   /*try {
     YouTube.Activities.List videosList = YouTubeAPI.create()
             .activities().list("snippet, contentDetails")
