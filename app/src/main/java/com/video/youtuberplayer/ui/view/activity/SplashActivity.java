@@ -14,6 +14,11 @@ import com.video.youtuberplayer.utils.PrefsUtils;
 
 public class SplashActivity extends BaseActivity {
   @Override
+  protected void initPresenter() {
+
+  }
+
+  @Override
   protected int getActivityBaseViewID() {
     return R.layout.activity_splash;
   }

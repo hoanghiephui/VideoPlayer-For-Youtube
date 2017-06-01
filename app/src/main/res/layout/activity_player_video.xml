@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordenation_layout"
@@ -9,153 +8,304 @@
     android:fitsSystemWindows="true"
     android:keepScreenOn="true">
 
-  <!-- THUMBNAIL -->
-  <android.support.design.widget.AppBarLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:fitsSystemWindows="true"
-      android:theme="@style/AppTheme.AppBarOverlay"
-      app:elevation="6dp">
-
-    <android.support.design.widget.CollapsingToolbarLayout
-        android:id="@+id/collapsingToolbar"
+    <!-- THUMBNAIL -->
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Title"
-        app:titleEnabled="false">
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="6dp">
 
-      <RelativeLayout
-          android:id="@+id/detail_thumbnail_root_layout"
-          android:layout_width="match_parent"
-          android:layout_height="200dp"
-          android:fitsSystemWindows="true">
-
-        <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-            android:id="@+id/aspectRatioLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center">
-
-          <SurfaceView
-              android:id="@+id/surfaceView"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_gravity="center"/>
-
-
-          <View
-              android:id="@+id/surfaceForeground"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@android:color/black"/>
-
-        </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/detail_thumbnail_image_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:fitsSystemWindows="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/bg"/>
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/detail_thumbnail_play_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_centerInParent="true"
-            android:background="@android:color/transparent"
-            android:visibility="visible"
-            app:srcCompat="@drawable/ic_play_circle_filled_white_24dp"
-            tools:ignore="ContentDescription"/>
-
-        <Button
-            android:id="@+id/detail_thumbnail_background_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackground"/>
-
-        <LinearLayout
-            android:id="@+id/bottomControls"
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/player_controls_bg"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+            app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Title"
+            app:titleEnabled="false">
 
-          <com.devspark.robototextview.widget.RobotoTextView
-              android:id="@+id/playbackCurrentTime"
-              android:layout_width="wrap_content"
-              android:layout_height="match_parent"
-              android:gravity="center"
-              android:minHeight="40dp"
-              android:text="-:--:--"
-              android:textColor="@android:color/white"
-              app:typeface="roboto_light"
-              tools:ignore="HardcodedText"
-              tools:text="1:06:29"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:fitsSystemWindows="true">
+
+                <RelativeLayout
+                    android:id="@+id/detail_thumbnail_root_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:fitsSystemWindows="true">
+
+                    <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+                        android:id="@+id/aspectRatioLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center">
+
+                        <SurfaceView
+                            android:id="@+id/surfaceView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center" />
 
 
-          <android.support.v7.widget.AppCompatSeekBar
-              android:id="@+id/playbackSeekBar"
-              style="@style/Widget.AppCompat.SeekBar"
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:paddingBottom="4dp"
-              android:paddingTop="8dp"
-              tools:progress="25"
-              tools:secondaryProgress="50"/>
+                        <View
+                            android:id="@+id/surfaceForeground"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/black" />
 
-          <com.devspark.robototextview.widget.RobotoTextView
-              android:id="@+id/playbackEndTime"
-              android:layout_width="wrap_content"
-              android:layout_height="match_parent"
-              android:gravity="center"
-              android:text="-:--:--"
-              android:textColor="@android:color/white"
-              app:typeface="roboto_light"
-              tools:ignore="HardcodedText"
-              tools:text="1:23:49"/>
+                    </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 
-          <android.support.v7.widget.AppCompatImageView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginLeft="16dp"
-              android:layout_marginRight="-4dp"
-              app:srcCompat="@drawable/ic_fullscreen_white_24dp"/>
-        </LinearLayout>
-      </RelativeLayout>
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/detail_thumbnail_image_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:fitsSystemWindows="true"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/bg" />
 
-      <android.support.v7.widget.Toolbar
-          android:id="@+id/toolbar"
-          android:layout_width="match_parent"
-          android:layout_height="?attr/actionBarSize"
-          android:background="@android:color/transparent"
-          app:elevation="6dp"
-          app:layout_collapseMode="pin"
-          app:popupTheme="@style/AppTheme.PopupOverlay"/>
-    </android.support.design.widget.CollapsingToolbarLayout>
-  </android.support.design.widget.AppBarLayout>
 
-  <android.support.v7.widget.RecyclerView
-      android:id="@+id/recyclerView"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-  <LinearLayout
-      android:visibility="gone"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                    <Button
+                        android:id="@+id/detail_thumbnail_background_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?attr/selectableItemBackground" />
 
-    <include layout="@layout/item_header_player_video"/>
-  </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/controlAnimationView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_fast_rewind_white_24dp"
+                            android:visibility="gone"
+                            tools:ignore="ContentDescription"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/playbackControlRoot"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#64000000"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fitsSystemWindows="true">
+
+                        <RelativeLayout
+                            android:id="@+id/topControls"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:background="@drawable/player_top_controls_bg"
+                            android:gravity="top"
+                            android:paddingBottom="70dp"
+                            android:paddingLeft="2dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="10dp"
+                            tools:ignore="RtlHardcoded">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_alignParentTop="true"
+                                android:layout_toLeftOf="@+id/qualityTextView"
+                                android:gravity="top"
+                                android:orientation="vertical"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="8dp"
+                                tools:ignore="RtlHardcoded">
+
+                                <TextView
+                                    android:id="@+id/titleTextView"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:maxLines="1"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    tools:ignore="RtlHardcoded"
+                                    tools:text="The Video Title LONG very LONG" />
+
+                                <TextView
+                                    android:id="@+id/channelTextView"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:maxLines="1"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="12sp"
+                                    tools:text="The Video Artist  LONG very LONG very Long" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/qualityTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="35dp"
+                                android:layout_marginLeft="2dp"
+                                android:layout_marginRight="2dp"
+                                android:layout_toLeftOf="@+id/screenRotationButton"
+                                android:gravity="center"
+                                android:minWidth="50dp"
+                                android:text="720p"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold"
+                                tools:ignore="HardcodedText,RtlHardcoded" />
+
+                            <android.support.v7.widget.AppCompatImageButton
+                                android:id="@+id/screenRotationButton"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:layout_marginLeft="2dp"
+                                android:layout_marginRight="2dp"
+                                android:layout_toLeftOf="@+id/repeatButton"
+                                android:background="#00ffffff"
+                                android:clickable="true"
+                                android:padding="8dp"
+                                android:scaleType="fitXY"
+                                app:srcCompat="@drawable/ic_screen_rotation_white_24dp"
+                                tools:ignore="ContentDescription,RtlHardcoded" />
+
+                            <android.support.v7.widget.AppCompatImageButton
+                                android:id="@+id/repeatButton"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:layout_marginLeft="2dp"
+                                android:layout_marginRight="2dp"
+                                android:layout_toLeftOf="@+id/moreButton"
+                                android:background="#00ffffff"
+                                android:clickable="true"
+                                android:padding="5dp"
+                                android:scaleType="fitXY"
+                                app:srcCompat="@drawable/ic_repeat_white_24dp"
+                                tools:ignore="ContentDescription,RtlHardcoded" />
+
+                            <android.support.v7.widget.AppCompatImageButton
+                                android:id="@+id/moreButton"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginLeft="4dp"
+                                android:background="#00ffffff"
+                                android:clickable="true"
+                                android:padding="6dp"
+                                android:scaleType="fitXY"
+                                app:srcCompat="@drawable/ic_more_vert_white_24dp"
+                                tools:ignore="ContentDescription,RtlHardcoded" />
+
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:id="@+id/bottomControls"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:background="@drawable/player_controls_bg"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingBottom="4dp"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
+                            android:paddingTop="4dp">
+
+                            <com.devspark.robototextview.widget.RobotoTextView
+                                android:id="@+id/playbackCurrentTime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:minHeight="40dp"
+                                android:text="-:--:--"
+                                android:textColor="@android:color/white"
+                                app:typeface="roboto_light"
+                                tools:ignore="HardcodedText"
+                                tools:text="1:06:29" />
+
+
+                            <android.support.v7.widget.AppCompatSeekBar
+                                android:id="@+id/playbackSeekBar"
+                                style="@style/Widget.AppCompat.SeekBar"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:paddingBottom="4dp"
+                                android:paddingTop="8dp"
+                                tools:progress="25"
+                                tools:secondaryProgress="50" />
+
+                            <com.devspark.robototextview.widget.RobotoTextView
+                                android:id="@+id/playbackEndTime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="-:--:--"
+                                android:textColor="@android:color/white"
+                                app:typeface="roboto_light"
+                                tools:ignore="HardcodedText"
+                                tools:text="1:23:49" />
+
+                            <android.support.v7.widget.AppCompatImageView
+                                android:id="@+id/fullScreenButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="16dp"
+                                android:layout_marginRight="-4dp"
+                                app:srcCompat="@drawable/ic_fullscreen_white_24dp" />
+                        </LinearLayout>
+
+                    </RelativeLayout>
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/detail_thumbnail_play_button"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_centerInParent="true"
+                        android:background="@android:color/transparent"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/ic_play_circle_filled_white_24dp"
+                        tools:ignore="ContentDescription" />
+
+                </RelativeLayout>
+            </FrameLayout>
+
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/transparent"
+                app:elevation="6dp"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include layout="@layout/item_header_player_video" />
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

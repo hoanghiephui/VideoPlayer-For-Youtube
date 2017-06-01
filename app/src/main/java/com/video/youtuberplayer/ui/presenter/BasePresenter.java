@@ -18,9 +18,6 @@ public abstract class BasePresenter<V extends IView, I> implements IPresenter<V>
     mInterceptor = interceptor;
   }
 
-  protected BasePresenter() {
-  }
-
   @Override
   public void onBindView(V view) {
     mView = view;
@@ -32,7 +29,7 @@ public abstract class BasePresenter<V extends IView, I> implements IPresenter<V>
       mView = null;
 
     if (mSubscribers != null)
-      mSubscribers.clear();
+      mSubscribers.dispose();
 
   }
 

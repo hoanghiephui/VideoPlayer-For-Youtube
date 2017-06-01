@@ -10,6 +10,7 @@ import com.video.youtuberplayer.api.GetFeaturedVideos;
 import com.video.youtuberplayer.api.GetGuideCategories;
 import com.video.youtuberplayer.api.GetVideoDetail;
 import com.video.youtuberplayer.api.base.BaseVideoDetail;
+import com.video.youtuberplayer.remote.mothods.VideoMethod;
 
 import java.io.IOException;
 
@@ -55,12 +56,6 @@ public enum VideoCategory {
    * @return A new instance of {@link VideoCategory}.
    */
   public static VideoCategory getVideoCategory(int id) {
-    if (id < FEATURED.id  ||  id > CHANNEL_VIDEOS.id) {
-      Log.e(TAG, "ILLEGAL ID VALUE=" + id);
-      Log.e(TAG, "Do NOT forget to update VideoCategories enum.");
-      id = FEATURED.id;
-    }
-
     return VideoCategory.values()[id];
   }
 
@@ -73,20 +68,11 @@ public enum VideoCategory {
    */
   public GetYouTubeVideos createGetYouTubeVideos(final long maxResults, final String token,
                                                  final String tokenNextPage) throws IOException {
-    if (id == FEATURED.id)
-      return new GetFeaturedVideos(maxResults, token, tokenNextPage);
-    else if (id == MOST_POPULAR.id)
-      return new GetFeaturedVideos(maxResults, token, tokenNextPage);
-    else if (id == SEARCH_QUERY.id)
-      return new GetFeaturedVideos(maxResults, token, tokenNextPage);
-    else if (id == CHANNEL_VIDEOS.id)
-      return new GetFeaturedVideos(maxResults, token, tokenNextPage);
-    else if (id == SUBSCRIPTIONS_FEED_VIDEOS.id)
-      return new GetFeaturedVideos(maxResults, token, tokenNextPage);
-    else if (id == BOOKMARKS_VIDEOS.id)
-      return new GetFeaturedVideos(maxResults, token, tokenNextPage);
-    else if (id == GUIDECATEGORIES.id) {
-      return new GetGuideCategories();
+    switch (getVideoCategory(id)) {
+      case FEATURED:
+        return new GetFeaturedVideos(maxResults, token, tokenNextPage);
+      case GUIDECATEGORIES:
+        return new GetGuideCategories();
     }
 
     // this will notify the developer is he forgot to amend this method when a new type is added

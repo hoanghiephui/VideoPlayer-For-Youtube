@@ -33,6 +33,8 @@ import java.util.List;
 import butterknife.BindView;
 import io.reactivex.disposables.CompositeDisposable;
 
+import static com.video.youtuberplayer.ui.view.activity.PlayerVideoActivity.VIDEO;
+
 /**
  * Created by hoanghiep on 5/7/17.
  */
@@ -296,11 +298,23 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
 
   @Override
   public void onVideoSelect(YouTubeVideo video) {
-    startActivity(new Intent(getActivity(), PlayerVideoActivity.class));
+    Intent intent = new Intent(getActivity(), PlayerVideoActivity.class);
+    Bundle bundle = new Bundle();
+    bundle.putSerializable(VIDEO, video);
+    intent.putExtras(bundle);
+    startActivity(intent);
   }
 
   @Override
   public void onLoadMore() {
     loadVideo(tokenNextPage);
+  }
+
+  @Override
+  public void onDestroyView() {
+    if (presenter != null) {
+      presenter.onUnbindView();
+    }
+    super.onDestroyView();
   }
 }

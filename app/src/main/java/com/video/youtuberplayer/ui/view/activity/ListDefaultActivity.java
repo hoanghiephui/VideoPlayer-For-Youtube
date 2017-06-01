@@ -29,6 +29,11 @@ public class ListDefaultActivity extends BaseActivity {
   }
 
   @Override
+  protected void initPresenter() {
+
+  }
+
+  @Override
   protected int getActivityBaseViewID() {
     return R.layout.activity_main;
   }

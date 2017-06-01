@@ -1,5 +1,7 @@
 package com.video.youtuberplayer.ui.view.activity;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +19,7 @@ import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.model.VideoCategory;
 import com.video.youtuberplayer.model.VideoDuration;
+import com.video.youtuberplayer.model.YouTubeVideo;
 import com.video.youtuberplayer.ui.contracts.GetVideoDetailContract;
 import com.video.youtuberplayer.ui.interceptor.GetVideoDetailInterceptor;
 import com.video.youtuberplayer.ui.presenter.GetVideoDetailPresenter;
@@ -37,6 +40,7 @@ import static com.video.youtuberplayer.utils.ViewUtils.onShowImage;
 
 public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailContract.IGetVideoDetailView {
   private static final String TAG = PlayerVideoActivity.class.getSimpleName();
+  public static final String VIDEO = "video";
 
   @BindView(R.id.playbackCurrentTime)
   RobotoTextView playbackCurrentTime;
@@ -49,9 +53,19 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
 
   private VideoPlayerMoreAdapter adapter;
   private List<Video> videoList = new ArrayList<>();
+  private YouTubeVideo video;
 
   private GetVideoDetailContract.IGetVideoDetailPresenter presenter;
   private GetVideoDetailContract.IGetVideoDetailInterceptor interceptor;
+
+  @Override
+  protected void onCreate(@Nullable Bundle savedInstanceState) {
+    if (getIntent() != null) {
+      video = (YouTubeVideo) getIntent().getExtras().getSerializable(VIDEO);
+    }
+    super.onCreate(savedInstanceState);
+  }
+
   @Override
   protected int getActivityBaseViewID() {
     return R.layout.activity_player_video;
@@ -62,13 +76,10 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     setTransToolbar();
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
       WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-    interceptor = new GetVideoDetailInterceptor();
-    presenter = new GetVideoDetailPresenter(interceptor, new CompositeDisposable());
     presenter.onBindView(this);
 
     try {
-      presenter.getVideoDetail(VideoCategory.VIDEODETAIL, null, "rWcSrLrmVw4");
+      presenter.getVideoDetail(VideoCategory.VIDEODETAIL, null, video.getId());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -86,7 +97,7 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
 
   @Override
   protected int getMenuLayoutID() {
-    return R.menu.menu_player;
+    return 0;
   }
 
   @Override
@@ -98,6 +109,12 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
       default:
         return super.onOptionsItemSelected(item);
     }
+  }
+
+  @Override
+  protected void initPresenter() {
+    interceptor = new GetVideoDetailInterceptor();
+    presenter = new GetVideoDetailPresenter(interceptor, new CompositeDisposable());
   }
 
   private void showBottomMenu() {
@@ -145,5 +162,13 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     adapter.setList(this.videoList);
     adapter.notifyDataSetChanged();
     Log.d(TAG, "onUpdateView: " + videoList.get(0).getSnippet().getTitle());
+  }
+
+  @Override
+  protected void onDestroy() {
+    if (presenter != null) {
+      presenter.onUnbindView();
+    }
+    super.onDestroy();
   }
 }

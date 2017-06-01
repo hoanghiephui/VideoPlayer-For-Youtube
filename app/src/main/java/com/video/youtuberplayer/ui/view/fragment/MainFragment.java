@@ -58,6 +58,7 @@ public class MainFragment extends BaseFragment implements GuideCategoriesContrac
     presenter.onBindView(this);
     Account account = new Gson().fromJson(PrefsUtils.getAccount(getContext()), Account.class);
 
+    //get tag
     try {
       presenter.getGuideCategories(VideoCategory.GUIDECATEGORIES, "VN", "vi-VN", account.getToken());
     } catch (IOException e) {

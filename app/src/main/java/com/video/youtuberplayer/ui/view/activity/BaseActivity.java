@@ -58,6 +58,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(getActivityBaseViewID());
+    initPresenter();
     if (mToolbar != null) {
       onSetupActionBar();
     }
@@ -152,6 +153,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
   public boolean isInternetConnected() {
     return ServerUtils.isNetworkConnected(this);
   }
+
+  protected abstract  void initPresenter();
 
   protected abstract int getActivityBaseViewID();
 

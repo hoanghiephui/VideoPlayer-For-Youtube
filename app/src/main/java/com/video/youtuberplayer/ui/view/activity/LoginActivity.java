@@ -63,6 +63,11 @@ public class LoginActivity extends BaseActivity implements EasyPermissions.Permi
   private static final String[] SCOPES = {YouTubeScopes.YOUTUBE_READONLY};
 
   @Override
+  protected void initPresenter() {
+
+  }
+
+  @Override
   protected int getActivityBaseViewID() {
     return R.layout.fragment_login;
   }

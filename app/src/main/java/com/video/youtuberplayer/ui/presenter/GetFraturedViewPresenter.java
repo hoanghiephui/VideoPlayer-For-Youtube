@@ -37,7 +37,6 @@ public class GetFraturedViewPresenter extends BasePresenter<GetFeaturedVideoCont
     mView.setProgressVisibility(View.VISIBLE);
     if (mView.isInternetConnected()) {
       mInterceptor.getFeaturedVideo(videos, maxResults, token, tokenNextPage)
-              .delay(500, TimeUnit.MILLISECONDS)
               .subscribeOn(Schedulers.newThread())
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe(onGetFeatured());
