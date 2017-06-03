@@ -24,6 +24,8 @@ import com.bumptech.glide.Glide;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.utils.ServerUtils;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -53,6 +55,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
   @Nullable
   @BindView(R.id.nav_view)
   NavigationView mNavigationView;
+
+  protected AtomicBoolean isLoading = new AtomicBoolean(false);
+  protected AtomicBoolean wasLoading = new AtomicBoolean(false);
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {

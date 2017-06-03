@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.video.youtuberplayer.R;
 
 import java.text.NumberFormat;
@@ -24,6 +25,7 @@ public class ViewUtils {
   public static void onShowImage(ImageView imageView, String url) {
     Glide.with(imageView.getContext())
             .load(url)
+            .diskCacheStrategy(DiskCacheStrategy.RESULT)
             .into(imageView);
   }
 

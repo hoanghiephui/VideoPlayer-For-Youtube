@@ -15,4 +15,5 @@
   <color name="video_cell_text_main">#FFF</color>
   <color name="video_cell_text_details">#808080</color>
   <color name="bg">#1F2224</color>
+    <color name="background_notification_color">#323232</color>
 </resources>

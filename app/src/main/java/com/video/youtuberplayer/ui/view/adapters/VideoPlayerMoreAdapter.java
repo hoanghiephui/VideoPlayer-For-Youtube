@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.video.youtuberplayer.utils.ViewUtils.localizeViewCount;
+import static com.video.youtuberplayer.utils.ViewUtils.onShowImage;
 
 /**
  * Created by hoanghiep on 5/8/17.
@@ -27,9 +28,11 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<RecyclerView.Vi
   private static final int CONTENT = 1;
   private List<Video> list;
   private Context context;
+  private OnListenAdapter onListenAdapter;
 
-  public VideoPlayerMoreAdapter(List<Video> list) {
+  public VideoPlayerMoreAdapter(List<Video> list, OnListenAdapter onListenAdapter) {
     this.list = list;
+    this.onListenAdapter = onListenAdapter;
   }
 
 
@@ -60,6 +63,12 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         ((ViewHeader) holder).detail_dislike.setText(localizeViewCount(video.getStatistics().getDislikeCount().longValue(), context));
         ((ViewHeader) holder).uploader.setText(video.getSnippet().getChannelTitle());
         //((ViewHeader) holder).countSub.setText(localizeViewCount(video.getStatistics().g));
+        ((ViewHeader) holder).viewPopup.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            onListenAdapter.onShowPopup();
+          }
+        });
       }
     } else {
       if (holder instanceof ViewContent) {
@@ -99,8 +108,6 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     CircleImageView avatar;
     @BindView(R.id.detail_uploader_text_view)
     TextView uploader;
-    @BindView(R.id.detail_count_sub)
-    TextView countSub;
 
     public ViewHeader(View itemView) {
       super(itemView);
@@ -113,5 +120,9 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public ViewContent(View itemView) {
       super(itemView);
     }
+  }
+
+  public interface OnListenAdapter {
+    void onShowPopup();
   }
 }

@@ -15,13 +15,9 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -49,6 +45,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
+import com.video.youtuberplayer.BuildConfig;
 
 import java.io.File;
 import java.util.Formatter;
@@ -60,7 +57,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 
 public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManager.OnAudioFocusChangeListener {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = BuildConfig.DEBUG;
     public static final String TAG = "BasePlayer";
 
     protected Context context;
@@ -164,7 +161,8 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
             public void run() {
                 //if(DEBUG) Log.d(TAG, "progressUpdate run() called");
                 onUpdateProgress((int) simpleExoPlayer.getCurrentPosition(), (int) simpleExoPlayer.getDuration(), simpleExoPlayer.getBufferedPercentage());
-                if (isProgressLoopRunning.get()) progressLoop.postDelayed(this, PROGRESS_LOOP_INTERVAL);
+                if (isProgressLoopRunning.get())
+                    progressLoop.postDelayed(this, PROGRESS_LOOP_INTERVAL);
             }
         };
     }
@@ -230,10 +228,11 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
     public void destroyPlayer() {
         if (DEBUG) Log.d(TAG, "destroyPlayer() called");
         if (simpleExoPlayer != null) {
-            simpleExoPlayer.stop();
             simpleExoPlayer.release();
         }
-        if (progressLoop != null && isProgressLoopRunning.get()) stopProgressLoop();
+        if (progressLoop != null && isProgressLoopRunning.get()) {
+            stopProgressLoop();
+        }
     }
 
     public void destroy() {
@@ -308,7 +307,8 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
 
     @Override
     public void onAudioFocusChange(int focusChange) {
-        if (DEBUG) Log.d(TAG, "onAudioFocusChange() called with: focusChange = [" + focusChange + "]");
+        if (DEBUG)
+            Log.d(TAG, "onAudioFocusChange() called with: focusChange = [" + focusChange + "]");
         if (simpleExoPlayer == null) return;
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:
@@ -331,7 +331,9 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
     }
 
     protected void onAudioFocusLoss() {
-        if (DEBUG) Log.d(TAG, "onAudioFocusLoss() called");
+        if (DEBUG) {
+            Log.d(TAG, "onAudioFocusLoss() called");
+        }
         simpleExoPlayer.setPlayWhenReady(false);
     }
 
@@ -431,7 +433,8 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
                 RepeatMode.REPEAT_ONE :
                 RepeatMode.REPEAT_DISABLED);
 
-        if (DEBUG) Log.d(TAG, "onRepeatClicked() currentRepeatMode = " + getCurrentRepeatMode().name());
+        if (DEBUG)
+            Log.d(TAG, "onRepeatClicked() currentRepeatMode = " + getCurrentRepeatMode().name());
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -450,13 +453,17 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
     public void onLoadingChanged(boolean isLoading) {
         if (DEBUG) Log.d(TAG, "onLoadingChanged() called with: isLoading = [" + isLoading + "]");
 
-        if (!isLoading && getCurrentState() == STATE_PAUSED && isProgressLoopRunning.get()) stopProgressLoop();
-        else if (isLoading && !isProgressLoopRunning.get()) startProgressLoop();
+        if (!isLoading && getCurrentState() == STATE_PAUSED && isProgressLoopRunning.get()) {
+            stopProgressLoop();
+        } else if (isLoading && !isProgressLoopRunning.get()) {
+            startProgressLoop();
+        }
     }
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (DEBUG) Log.d(TAG, "onPlayerStateChanged() called with: playWhenReady = [" + playWhenReady + "], playbackState = [" + playbackState + "]");
+        if (DEBUG)
+            Log.d(TAG, "onPlayerStateChanged() called with: playWhenReady = [" + playWhenReady + "], playbackState = [" + playbackState + "]");
         if (getCurrentState() == STATE_PAUSED_SEEK) {
             if (DEBUG) Log.d(TAG, "onPlayerStateChanged() currently on PausedSeek");
             return;
@@ -503,7 +510,8 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
 
     public void onPrepared(boolean playWhenReady) {
         if (DEBUG) Log.d(TAG, "onPrepared() called with: playWhenReady = [" + playWhenReady + "]");
-        if (playWhenReady) audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (playWhenReady)
+            audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         changeState(playWhenReady ? STATE_PLAYING : STATE_PAUSED);
     }
 
@@ -517,8 +525,11 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
             return;
         }
 
-        if (!isPlaying()) audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-        else audioManager.abandonAudioFocus(null);
+        if (!isPlaying()) {
+            audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        } else {
+            audioManager.abandonAudioFocus(null);
+        }
 
         simpleExoPlayer.setPlayWhenReady(!isPlaying());
     }
@@ -548,7 +559,8 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
 
     public void seekBy(int milliSeconds) {
         if (DEBUG) Log.d(TAG, "seekBy() called with: milliSeconds = [" + milliSeconds + "]");
-        if (simpleExoPlayer == null || (isCompleted() && milliSeconds > 0) || ((milliSeconds < 0 && simpleExoPlayer.getCurrentPosition() == 0))) return;
+        if (simpleExoPlayer == null || (isCompleted() && milliSeconds > 0) || ((milliSeconds < 0 && simpleExoPlayer.getCurrentPosition() == 0)))
+            return;
         int progress = (int) (simpleExoPlayer.getCurrentPosition() + milliSeconds);
         if (progress < 0) progress = 0;
         simpleExoPlayer.seekTo(progress);
@@ -596,7 +608,8 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
                 if (cacheDir.isDirectory()) {
                     for (File file : cacheDir.listFiles()) {
                         try {
-                            if (DEBUG) Log.d(TAG, "tryDeleteCacheFiles: " + file.getAbsolutePath() + " deleted = " + file.delete());
+                            if (DEBUG)
+                                Log.d(TAG, "tryDeleteCacheFiles: " + file.getAbsolutePath() + " deleted = " + file.delete());
                         } catch (Exception ignored) {
                         }
                     }
@@ -633,7 +646,8 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                if (simpleExoPlayer != null) simpleExoPlayer.setVolume(((float) animation.getAnimatedValue()));
+                if (simpleExoPlayer != null)
+                    simpleExoPlayer.setVolume(((float) animation.getAnimatedValue()));
             }
         });
         valueAnimator.start();

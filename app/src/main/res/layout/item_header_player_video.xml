@@ -227,8 +227,8 @@
 
       <de.hdodenhof.circleimageview.CircleImageView
           android:id="@+id/detail_uploader_thumbnail_view"
-          android:layout_width="60dp"
-          android:layout_height="60dp"
+          android:layout_width="48dp"
+          android:layout_height="48dp"
           android:layout_alignParentLeft="true"
           android:src="@drawable/bg_splash"
           tools:ignore="RtlHardcoded"/>
@@ -238,8 +238,8 @@
           android:layout_height="wrap_content"
           android:layout_centerVertical="true"
           android:layout_marginLeft="15dp"
-          android:layout_toEndOf="@+id/detail_uploader_thumbnail_view"
           android:layout_toRightOf="@+id/detail_uploader_thumbnail_view"
+          android:layout_toLeftOf="@+id/subscribe"
           android:orientation="vertical">
 
         <com.devspark.robototextview.widget.RobotoTextView
@@ -252,20 +252,14 @@
             app:typeface="roboto_black"
             tools:ignore="RtlHardcoded"
             tools:text="Uploader"/>
-
-        <com.devspark.robototextview.widget.RobotoTextView
-            android:id="@+id/detail_count_sub"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:typeface="roboto_thin"
-            tools:ignore="RtlHardcoded"
-            tools:text="ssfsfdsfsdfsf"/>
       </LinearLayout>
 
-
+      <android.support.v7.widget.AppCompatButton
+          android:id="@+id/subscribe"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentRight="true"
+          android:text="@string/subscribe"/>
     </RelativeLayout>
 
     <View
