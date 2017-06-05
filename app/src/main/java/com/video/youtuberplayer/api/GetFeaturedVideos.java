@@ -30,6 +30,8 @@ import com.video.youtuberplayer.remote.YouTubeAPIKey;
 import java.io.IOException;
 import java.util.List;
 
+import static com.video.youtuberplayer.utils.LocaleUtils.getLocaleCountryISO;
+
 /**
  * Get today's featured YouTube videos.
  */
@@ -40,14 +42,14 @@ public class GetFeaturedVideos extends GetYouTubeVideos {
   private VideoListResponse response;
 
   public GetFeaturedVideos(final long maxResults, final String token, String tokenNextPage) throws IOException{
-    videosList = YouTubeAPI.create().videos().list("snippet, statistics, contentDetails");
+    videosList = YouTubeAPI.create().videos().list("snippet, statistics, contentDetails, liveStreamingDetails");
     videosList.setFields("items(id, snippet/defaultAudioLanguage, snippet/defaultLanguage, snippet/publishedAt, " +
             "snippet/title, snippet/channelId, snippet/channelTitle," +
             "snippet/thumbnails/high, contentDetails/duration, statistics)," +
             "nextPageToken");
     videosList.setKey(YouTubeAPIKey.get().getYouTubeAPIKey());
     videosList.setChart("mostPopular");
-    videosList.setRegionCode(getPreferredRegion());
+    videosList.setRegionCode(getLocaleCountryISO());
     videosList.setMaxResults(maxResults);
     if (token != null) {
       videosList.setOauthToken(token);

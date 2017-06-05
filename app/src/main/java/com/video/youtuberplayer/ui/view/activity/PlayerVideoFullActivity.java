@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.StreamExtractorWorker;
@@ -72,6 +73,11 @@ public class PlayerVideoFullActivity extends BaseActivity implements GetVideoDet
 
     @Override
     public void onUpdateView(List<Video> videoList) {
+
+    }
+
+    @Override
+    public void onUpdateViewRelated(List<SearchResult> resultList) {
 
     }
 

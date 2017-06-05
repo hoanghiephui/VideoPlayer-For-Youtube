@@ -2,8 +2,8 @@ package com.video.youtuberplayer.ui.presenter;
 
 import android.util.Log;
 
+import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
-import com.video.youtuberplayer.model.VideoCategory;
 import com.video.youtuberplayer.ui.contracts.GetVideoDetailContract;
 
 import java.io.IOException;
@@ -21,42 +21,74 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class GetVideoDetailPresenter extends BasePresenter<GetVideoDetailContract.IGetVideoDetailView, GetVideoDetailContract.IGetVideoDetailInterceptor>
- implements GetVideoDetailContract.IGetVideoDetailPresenter {
-  private static final String TAG = GetVideoDetailPresenter.class.getSimpleName();
+        implements GetVideoDetailContract.IGetVideoDetailPresenter {
+    private static final String TAG = GetVideoDetailPresenter.class.getSimpleName();
 
-  public GetVideoDetailPresenter(GetVideoDetailContract.IGetVideoDetailInterceptor interceptor, CompositeDisposable compositeDisposable) {
-    super(interceptor, compositeDisposable);
-  }
+    public GetVideoDetailPresenter(GetVideoDetailContract.IGetVideoDetailInterceptor interceptor, CompositeDisposable compositeDisposable) {
+        super(interceptor, compositeDisposable);
+    }
 
-  @Override
-  public void getVideoDetail(VideoCategory videos, String token, String id) throws IOException {
-    mInterceptor.getVideoDetail(videos, token, id)
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onGetVideoDetail());
-  }
+    @Override
+    public void getVideoDetail(String token, String id) throws IOException {
+        mInterceptor.getVideoDetail(token, id)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onGetVideoDetail());
+    }
 
-  private Observer<List<Video>> onGetVideoDetail() {
-    return new Observer<List<Video>>() {
-      @Override
-      public void onSubscribe(@NonNull Disposable d) {
-        mSubscribers.add(d);
-      }
+    @Override
+    public void getRelatedToVideoId(String id, String token, String tokenPage) throws IOException {
+        mInterceptor.getRelatedToVideoId(id, token, tokenPage)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onRelatedToVideoId());
+    }
 
-      @Override
-      public void onNext(@NonNull List<Video> videoList) {
-        mView.onUpdateView(videoList);
-      }
+    private Observer<? super List<SearchResult>> onRelatedToVideoId() {
+        return new Observer<List<SearchResult>>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                mSubscribers.dispose();
+            }
 
-      @Override
-      public void onError(@NonNull Throwable e) {
-        Log.d(TAG, "onError: " + e.getMessage());
-      }
+            @Override
+            public void onNext(@NonNull List<SearchResult> resultList) {
+                mView.onUpdateViewRelated(resultList);
+            }
 
-      @Override
-      public void onComplete() {
+            @Override
+            public void onError(@NonNull Throwable e) {
+                e.printStackTrace();
+            }
 
-      }
-    };
-  }
+            @Override
+            public void onComplete() {
+
+            }
+        };
+    }
+
+    private Observer<List<Video>> onGetVideoDetail() {
+        return new Observer<List<Video>>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                mSubscribers.add(d);
+            }
+
+            @Override
+            public void onNext(@NonNull List<Video> videoList) {
+                mView.onUpdateView(videoList);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.d(TAG, "onError: " + e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+    }
 }

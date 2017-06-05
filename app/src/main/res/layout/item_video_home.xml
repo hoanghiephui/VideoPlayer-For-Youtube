@@ -108,12 +108,31 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-          <com.devspark.robototextview.widget.RobotoTextView
-              android:id="@+id/channel_text_view"
-              style="@style/GridDetailsTextView"
-              android:foreground="?android:attr/selectableItemBackground"
-              android:text="Channel"
-              app:typeface="roboto_black"/>
+          <LinearLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal">
+
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/channel_text_view"
+                style="@style/GridDetailsTextView"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="Channel"
+                app:typeface="roboto_black" />
+
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:layout_marginLeft="16dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:id="@+id/live"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:drawableRight="@drawable/ic_fiber_manual_record_red_700_24dp"
+                android:text="@string/LIVE"
+                android:textColor="@android:color/white"
+                app:typeface="roboto_light" />
+          </LinearLayout>
 
           <LinearLayout
               android:layout_width="match_parent"

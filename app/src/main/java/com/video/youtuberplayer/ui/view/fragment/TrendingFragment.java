@@ -66,7 +66,7 @@ public class TrendingFragment extends BaseFragment implements GetFeaturedVideoCo
       maxResult = getArguments().getLong(MAX_RESULT);
     }
     try {
-      presenter.getFeaturedVideo(VideoCategory.FEATURED, maxResult, token, null);
+      presenter.getFeaturedVideo(maxResult, token, null);
     } catch (IOException e) {
       e.printStackTrace();
     }

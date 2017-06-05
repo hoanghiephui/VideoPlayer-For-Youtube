@@ -176,7 +176,7 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
       mSwipeRefreshLayout.setRefreshing(false);
     }
     try {
-      presenter.getFeaturedVideo(VideoCategory.FEATURED, maxResult, token, tokenNextPage);
+      presenter.getFeaturedVideo(maxResult, token, tokenNextPage);
     } catch (IOException e) {
       e.printStackTrace();
     }

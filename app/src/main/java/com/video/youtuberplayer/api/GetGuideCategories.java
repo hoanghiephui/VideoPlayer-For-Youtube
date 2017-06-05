@@ -46,6 +46,13 @@ public class GetGuideCategories extends GetYouTubeVideos {
             .setKey(YouTubeAPIKey.get().getYouTubeAPIKey());
   }
 
+  public GetGuideCategories(String regionCode, String hl, String token) throws IOException {
+    list = YouTubeAPI.create().guideCategories().list("snippet")
+            .setHl(hl)
+            .setRegionCode(regionCode)
+            .setKey(YouTubeAPIKey.get().getYouTubeAPIKey());
+  }
+
   @Override
   public List<GuideCategory> listGuideCategories() {
     try {

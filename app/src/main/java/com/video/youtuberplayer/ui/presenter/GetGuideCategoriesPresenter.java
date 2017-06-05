@@ -1,10 +1,12 @@
 package com.video.youtuberplayer.ui.presenter;
 
+import com.google.api.services.youtube.model.GuideCategory;
 import com.video.youtuberplayer.model.GetYouTubeVideos;
 import com.video.youtuberplayer.model.VideoCategory;
 import com.video.youtuberplayer.ui.contracts.GuideCategoriesContract;
 
 import java.io.IOException;
+import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -25,24 +27,24 @@ public class GetGuideCategoriesPresenter extends BasePresenter<GuideCategoriesCo
   }
 
   @Override
-  public void getGuideCategories(VideoCategory videoCategory, String regionCode, String hl, String token) throws IOException {
-    mInterceptor.getGuideCategories(videoCategory, regionCode, hl, token)
+  public void getGuideCategories(String regionCode, String hl, String token) throws IOException {
+    mInterceptor.getGuideCategories(regionCode, hl, token)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(onGetGuideCategorie());
   }
 
-  private Observer<GetYouTubeVideos> onGetGuideCategorie() {
-    return new Observer<GetYouTubeVideos>() {
+  private Observer<List<GuideCategory>> onGetGuideCategorie() {
+    return new Observer<List<GuideCategory>>() {
       @Override
       public void onSubscribe(@NonNull Disposable d) {
         mSubscribers.add(d);
       }
 
       @Override
-      public void onNext(@NonNull GetYouTubeVideos videos) {
-        if (videos.listGuideCategories() != null) {
-          mView.updateView(videos.listGuideCategories());
+      public void onNext(@NonNull List<GuideCategory> videos) {
+        if (videos != null) {
+          mView.updateView(videos);
         } else {
           mView.onErrorInServer();
         }

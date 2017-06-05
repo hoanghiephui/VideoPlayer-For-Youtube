@@ -1,5 +1,6 @@
 package com.video.youtuberplayer.ui.interceptor;
 
+import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.model.VideoCategory;
 import com.video.youtuberplayer.remote.mothods.VideoMethod;
@@ -22,7 +23,12 @@ public class GetVideoDetailInterceptor implements GetVideoDetailContract.IGetVid
   }
 
   @Override
-  public Observable<List<Video>> getVideoDetail(VideoCategory videos, String token, String id) throws IOException {
-    return videoMethod.getVideoDetail(videos, token, id);
+  public Observable<List<Video>> getVideoDetail(String token, String id) throws IOException {
+    return videoMethod.getVideoDetail(token, id);
+  }
+
+  @Override
+  public Observable<List<SearchResult>> getRelatedToVideoId(String id, String token, String tokenPage) throws IOException {
+    return videoMethod.getRelatedVideos(id, token, tokenPage);
   }
 }

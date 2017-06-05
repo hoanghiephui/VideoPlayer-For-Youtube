@@ -10,10 +10,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField 'String[]', 'YOUTUBE_API_KEYS',
-                '{' +
-                        '"AIzaSyCchJsFlWeyxi4MgKj5rudYgNR18Q0HIXU"' +
-                        '}';
+        buildConfigField 'String', 'YOUTUBE_API_KEYS',
+                '"AIzaSyDeIzmq7ugl6oLEt2HJU-_AJaxuFxjMOYo"';
         vectorDrawables.useSupportLibrary true
         multiDexEnabled true
     }

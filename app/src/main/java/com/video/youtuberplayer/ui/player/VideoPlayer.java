@@ -14,17 +14,25 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.AppCompatSeekBar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.github.rubensousa.bottomsheetbuilder.BottomSheetBuilder;
+import com.github.rubensousa.bottomsheetbuilder.BottomSheetMenuDialog;
+import com.github.rubensousa.bottomsheetbuilder.adapter.BottomSheetItemClickListener;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -49,7 +57,7 @@ import static com.video.youtuberplayer.utils.AnimationUtils.animateView;
  */
 
 public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.VideoListener, SeekBar.OnSeekBarChangeListener,
-        View.OnClickListener, ExoPlayer.EventListener {
+        View.OnClickListener, ExoPlayer.EventListener, PopupMenu.OnMenuItemClickListener, PopupMenu.OnDismissListener {
 
     public static final boolean DEBUG = BasePlayer.DEBUG;
 
@@ -59,7 +67,7 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
 
     public static final String VIDEO_STREAMS_LIST = "video_streams_list";
     public static final String VIDEO_ONLY_AUDIO_STREAM = "video_only_audio_stream";
-    public static final String INDEX_SEL_VIDEO_STREAM = "index_selected_video_stream";
+    public static final String INDEX_QUALITY_VIDEO_STREAM = "index_selected_video_stream";//0,1,.../1080, 720...
     public static final String STARTED_FROM_NEWPIPE = "started_from_newpipe";
 
     private int selectedIndexStream;
@@ -99,9 +107,20 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
     TextView qualityTextView;
     AppCompatImageView fullScreenButton;
     private View loadingPanel;
+    private AppCompatActivity compatActivity;
+    private AppCompatImageButton moreButton;
 
     private ValueAnimator controlViewAnimator;
     private Handler controlsVisibilityHandler = new Handler();
+
+    private boolean isQualityPopupMenuVisible = false;
+    private boolean qualityChanged = false;
+    private int qualityPopupMenuGroupId = 69;
+    private PopupMenu qualityPopupMenu;
+
+    public boolean isQualityMenuVisible() {
+        return isQualityPopupMenuVisible;
+    }
 
     public VideoPlayer(Context context) {
         super(context);
@@ -111,6 +130,12 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
     public void setup(View rootView) {
         initViews(rootView);
         setup();
+    }
+
+    public void setup(View rootView, AppCompatActivity activity) {
+        initViews(rootView);
+        setup();
+        this.compatActivity = activity;
     }
 
     public void setup() {
@@ -137,12 +162,13 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
         this.qualityTextView = (TextView) rootView.findViewById(R.id.qualityTextView);
         this.fullScreenButton = (AppCompatImageView) rootView.findViewById(R.id.fullScreenButton);
         this.loadingPanel = rootView.findViewById(R.id.loading_panel);
+        this.moreButton = (AppCompatImageButton) rootView.findViewById(R.id.moreButton);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             playbackSeekBar.getThumb().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
         }
         this.playbackSeekBar.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-
+        this.qualityPopupMenu = new PopupMenu(context, qualityTextView);
         ((ProgressBar) this.loadingPanel.findViewById(R.id.progressBarLoadingPanel)).getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
 
     }
@@ -152,7 +178,9 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
         super.initListeners();
         playbackSeekBar.setOnSeekBarChangeListener(this);
         fullScreenButton.setOnClickListener(this);
-        qualityTextView.setOnClickListener(this);
+        if (this.moreButton != null) {
+            this.moreButton.setOnClickListener(this);
+        }
     }
 
     @Override
@@ -169,12 +197,14 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
             return;
         }
 
-        selectedIndexStream = intent.getIntExtra(INDEX_SEL_VIDEO_STREAM, -1);
+        selectedIndexStream = intent.getIntExtra(INDEX_QUALITY_VIDEO_STREAM, -1);
 
         Serializable serializable = intent.getSerializableExtra(VIDEO_STREAMS_LIST);
 
-        if (serializable instanceof ArrayList) videoStreamsList = (ArrayList<VideoStream>) serializable;
-        if (serializable instanceof Vector) videoStreamsList = new ArrayList<>((List<VideoStream>) serializable);
+        if (serializable instanceof ArrayList)
+            videoStreamsList = (ArrayList<VideoStream>) serializable;
+        if (serializable instanceof Vector)
+            videoStreamsList = new ArrayList<>((List<VideoStream>) serializable);
 
         Serializable audioStream = intent.getSerializableExtra(VIDEO_ONLY_AUDIO_STREAM);
         if (audioStream != null) videoOnlyAudioStream = (AudioStream) audioStream;
@@ -190,6 +220,16 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
 
     @Override
     public void playUrl(String url, String format, boolean autoPlay) {
+        qualityChanged = false;
+
+        if (url == null || simpleExoPlayer == null) {
+            RuntimeException runtimeException = new RuntimeException((url == null ? "Url " : "Player ") + " null");
+            onError(runtimeException);
+            throw runtimeException;
+        }
+
+        qualityPopupMenu.getMenu().removeGroup(qualityPopupMenuGroupId);
+        buildQualityMenu(qualityPopupMenu);
         super.playUrl(url, format, autoPlay);
     }
 
@@ -223,7 +263,8 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
         playbackSeekBar.setProgress(0);
 
         // Bug on lower api, disabling and enabling the seekBar resets the thumb color -.-, so sets the color again
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) playbackSeekBar.getThumb().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            playbackSeekBar.getThumb().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
 
         animateView(endScreen, false, 0);
         animateView(loadingPanel, true, 0);
@@ -290,6 +331,11 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
         }
     }
 
+    @Override
+    public void onError(Exception exception) {
+
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
     // ExoPlayer Video Listener
     //////////////////////////////////////////////////////////////////////////*/
@@ -354,10 +400,12 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
     @Override
     public void onVideoPlayPauseRepeat() {
         if (DEBUG) Log.d(TAG, "onVideoPlayPauseRepeat() called");
-        /*if (qualityChanged) {
+        if (qualityChanged) {
             setVideoStartPos(0);
             play(true);
-        } else*/ super.onVideoPlayPauseRepeat();
+        } else {
+            super.onVideoPlayPauseRepeat();
+        }
     }
 
     @Override
@@ -389,14 +437,64 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
         if (DEBUG) Log.d(TAG, "onClick() called with: v = [" + v + "]");
         if (v.getId() == fullScreenButton.getId()) {
             onFullScreenButtonClicked();
-        } else if (v.getId() == qualityTextView.getId()) {
-            ///onQualitySelectorClicked();
+        } else if (v.getId() == this.moreButton.getId()) {
+            onQualitySelectorClicked();
         }
     }
 
+    @Override
+    public void onDismiss(PopupMenu menu) {
+        if (DEBUG) Log.d(TAG, "onDismiss() called with: menu = [" + menu + "]");
+        isQualityPopupMenuVisible = false;
+        qualityTextView.setText(getSelectedVideoStream().resolution);
+    }
 
 
+    public void onQualitySelectorClicked() {
+        showBottomMenu();
+    }
 
+    private void showBottomMenu() {
+        final BottomSheetMenuDialog dialog = new BottomSheetBuilder(context)
+                .setMode(BottomSheetBuilder.MODE_LIST)
+                .setMenu(R.menu.menu_bottom_player)
+                .expandOnStart(true)
+                .setIconTintColor(ContextCompat.getColor(context, R.color.video_cell_text_details))
+                .setTitleTextColor(ContextCompat.getColor(context, R.color.video_cell_text_details))
+                .setItemClickListener(new BottomSheetItemClickListener() {
+                    @Override
+                    public void onBottomSheetItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.menu_quality:
+                                qualityPopupMenu.show();
+                                isQualityPopupMenuVisible = true;
+                                showControls(300);
+
+                                VideoStream videoStream = getSelectedVideoStream();
+                                qualityTextView.setText(MediaFormat.getNameById(videoStream.format) + " " + videoStream.resolution);
+                                wasPlaying = isPlaying();
+                                break;
+                            case R.id.menu_backgroud:
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                })
+                .createDialog();
+
+        dialog.show();
+    }
+
+    public void buildQualityMenu(PopupMenu popupMenu) {
+        for (int i = 0; i < videoStreamsList.size(); i++) {
+            VideoStream videoStream = videoStreamsList.get(i);
+            popupMenu.getMenu().add(qualityPopupMenuGroupId, i, Menu.NONE, MediaFormat.getNameById(videoStream.format) + " " + videoStream.resolution);
+        }
+        qualityTextView.setText(getSelectedVideoStream().resolution);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.setOnDismissListener(this);
+    }
 
     /*//////////////////////////////////////////////////////////////////////////
     // SeekBar Listener
@@ -404,7 +502,8 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (DEBUG && fromUser) Log.d(TAG, "onProgressChanged() called with: seekBar = [" + seekBar + "], progress = [" + progress + "]");
+        if (DEBUG && fromUser)
+            Log.d(TAG, "onProgressChanged() called with: seekBar = [" + seekBar + "], progress = [" + progress + "]");
         //if (fromUser) playbackCurrentTime.setText(getTimeString(progress));
         if (fromUser) currentDisplaySeek.setText(getTimeString(progress));
     }
@@ -426,7 +525,8 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
         if (DEBUG) Log.d(TAG, "onStopTrackingTouch() called with: seekBar = [" + seekBar + "]");
 
         simpleExoPlayer.seekTo(seekBar.getProgress());
-        if (wasPlaying || simpleExoPlayer.getDuration() == seekBar.getProgress()) simpleExoPlayer.setPlayWhenReady(true);
+        if (wasPlaying || simpleExoPlayer.getDuration() == seekBar.getProgress())
+            simpleExoPlayer.setPlayWhenReady(true);
 
         playbackCurrentTime.setText(getTimeString(seekBar.getProgress()));
         animateView(currentDisplaySeek, AnimationUtils.Type.SCALE_AND_ALPHA, false, 200);
@@ -450,7 +550,8 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
      * @param goneOnEnd  will set the animation view to GONE on the end of the animation
      */
     public void showAndAnimateControl(final int drawableId, final boolean goneOnEnd) {
-        if (DEBUG) Log.d(TAG, "showAndAnimateControl() called with: drawableId = [" + drawableId + "], goneOnEnd = [" + goneOnEnd + "]");
+        if (DEBUG)
+            Log.d(TAG, "showAndAnimateControl() called with: drawableId = [" + drawableId + "], goneOnEnd = [" + goneOnEnd + "]");
         if (controlViewAnimator != null && controlViewAnimator.isRunning()) {
             if (DEBUG) Log.d(TAG, "showAndAnimateControl: controlViewAnimator.isRunning");
             controlViewAnimator.end();
@@ -650,4 +751,27 @@ public abstract class VideoPlayer extends BasePlayer implements SimpleExoPlayer.
         return currentDisplaySeek;
     }
 
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        Log.d(TAG, "onMenuItemClick() called with: menuItem = [" + menuItem + "], menuItem.getItemId = [" + menuItem.getItemId() + "]");
+        if (selectedIndexStream == menuItem.getItemId()) {
+            return true;
+        }
+        setVideoStartPos((int) simpleExoPlayer.getCurrentPosition());
+
+        selectedIndexStream = menuItem.getItemId();
+        if (!(getCurrentState() == STATE_COMPLETED)) {
+            play(wasPlaying);
+        } else {
+            qualityChanged = true;
+        }
+
+        qualityTextView.setText(menuItem.getTitle());
+        return true;
+    }
+
+    @Override
+    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
+    }
 }

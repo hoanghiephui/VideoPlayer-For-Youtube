@@ -71,8 +71,6 @@ public enum VideoCategory {
     switch (getVideoCategory(id)) {
       case FEATURED:
         return new GetFeaturedVideos(maxResults, token, tokenNextPage);
-      case GUIDECATEGORIES:
-        return new GetGuideCategories();
     }
 
     // this will notify the developer is he forgot to amend this method when a new type is added

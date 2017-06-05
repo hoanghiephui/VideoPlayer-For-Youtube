@@ -1,5 +1,6 @@
 package com.video.youtuberplayer.ui.contracts;
 
+import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.model.VideoCategory;
 import com.video.youtuberplayer.ui.presenter.IPresenter;
@@ -16,14 +17,22 @@ import io.reactivex.Observable;
 
 public class GetVideoDetailContract {
   public interface IGetVideoDetailInterceptor {
-    Observable<List<Video>> getVideoDetail(VideoCategory videoCategory, String token, String id) throws IOException;
+    Observable<List<Video>> getVideoDetail(String token, String id) throws IOException;
+
+    Observable<List<SearchResult>> getRelatedToVideoId(String id, String token, String tokenPage) throws IOException;
   }
 
   public interface IGetVideoDetailPresenter extends IPresenter<IGetVideoDetailView> {
-    void getVideoDetail(VideoCategory videos, String token, String id) throws IOException;
+
+    void getVideoDetail(String token, String id) throws IOException;
+
+    void getRelatedToVideoId(String id, String token, String tokenPage) throws IOException;
   }
 
   public interface IGetVideoDetailView extends IView {
+
     void onUpdateView(List<Video> videoList);
+
+    void onUpdateViewRelated(List<SearchResult> resultList);
   }
 }

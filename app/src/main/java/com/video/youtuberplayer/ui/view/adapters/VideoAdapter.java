@@ -53,12 +53,18 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
       Glide.with(holder.itemView.getContext()).load(youTubeVideo.getThumbnailUrl())
               .thumbnail(0.5f)
               .crossFade()
-              .diskCacheStrategy(DiskCacheStrategy.ALL)
+              .diskCacheStrategy(DiskCacheStrategy.SOURCE)
               .into(((VideoCategoryViewHolder) holder).thumbnail);
       ((VideoCategoryViewHolder) holder).channel.setText(youTubeVideo.getChannelName());
       ((VideoCategoryViewHolder) holder).duration.setText(youTubeVideo.getDuration());
       ((VideoCategoryViewHolder) holder).publishDate.setText(youTubeVideo.getPublishDatePretty());
-      ((VideoCategoryViewHolder) holder).thumbsUp.setText(youTubeVideo.getThumbsUpPercentageStr());
+      if (youTubeVideo.getThumbsUpPercentageStr() != null) {
+        ((VideoCategoryViewHolder) holder).thumbsUp.setText(youTubeVideo.getThumbsUpPercentageStr());
+      } else {
+        ((VideoCategoryViewHolder) holder).thumbsUp.setVisibility(View.GONE);
+      }
+
+      ((VideoCategoryViewHolder) holder).live.setVisibility(youTubeVideo.isLiveStream() ? View.VISIBLE : View.GONE);
       ((VideoCategoryViewHolder) holder).views.setText(youTubeVideo.getViewsCount());
 
       if (position >= getItemCount() - 1) {
@@ -94,6 +100,8 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     TextView sepatator;
     @BindView(R.id.publish_date_text_view)
     TextView publishDate;
+    @BindView(R.id.live)
+    TextView live;
 
     public VideoCategoryViewHolder(View itemView) {
       super(itemView);

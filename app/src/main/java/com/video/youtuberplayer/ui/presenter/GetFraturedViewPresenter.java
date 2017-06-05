@@ -33,10 +33,10 @@ public class GetFraturedViewPresenter extends BasePresenter<GetFeaturedVideoCont
   }
 
   @Override
-  public void getFeaturedVideo(VideoCategory videos, long maxResults, String token, String tokenNextPage) throws IOException {
+  public void getFeaturedVideo(long maxResults, String token, String tokenNextPage) throws IOException {
     mView.setProgressVisibility(View.VISIBLE);
     if (mView.isInternetConnected()) {
-      mInterceptor.getFeaturedVideo(videos, maxResults, token, tokenNextPage)
+      mInterceptor.getFeaturedVideo(maxResults, token, tokenNextPage)
               .subscribeOn(Schedulers.newThread())
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe(onGetFeatured());

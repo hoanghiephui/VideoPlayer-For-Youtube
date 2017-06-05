@@ -59,8 +59,14 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<RecyclerView.Vi
       if (holder instanceof ViewHeader) {
         ((ViewHeader) holder).title.setText(video.getSnippet().getTitle());
         ((ViewHeader) holder).count_view.setText(localizeViewCount(video.getStatistics().getViewCount().longValue(), context));
-        ((ViewHeader) holder).detail_like.setText(localizeViewCount(video.getStatistics().getLikeCount().longValue(), context));
-        ((ViewHeader) holder).detail_dislike.setText(localizeViewCount(video.getStatistics().getDislikeCount().longValue(), context));
+        if (video.getStatistics().getLikeCount() != null) {
+          ((ViewHeader) holder).detail_like.setText(localizeViewCount(video.getStatistics().getLikeCount().longValue(), context));
+        }
+
+        if (video.getStatistics().getDislikeCount() != null ){
+          ((ViewHeader) holder).detail_dislike.setText(localizeViewCount(video.getStatistics().getDislikeCount().longValue(), context));
+        }
+
         ((ViewHeader) holder).uploader.setText(video.getSnippet().getChannelTitle());
         //((ViewHeader) holder).countSub.setText(localizeViewCount(video.getStatistics().g));
         ((ViewHeader) holder).viewPopup.setOnClickListener(new View.OnClickListener() {

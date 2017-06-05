@@ -18,7 +18,7 @@ import io.reactivex.Observable;
 public class GuideCategoriesContract {
 
   public interface IGuideCategoriesInterceptor {
-    Observable<GetYouTubeVideos> getGuideCategories(VideoCategory videoCategory, final String regionCode, final String hl, final String token) throws IOException;
+    Observable<List<GuideCategory>> getGuideCategories(final String regionCode, final String hl, final String token) throws IOException;
   }
 
   public interface IGuideCategoriesView extends IView {
@@ -26,6 +26,6 @@ public class GuideCategoriesContract {
   }
 
   public interface IGuideCategoriesPresenter extends IPresenter<IGuideCategoriesView> {
-    void getGuideCategories(VideoCategory videoCategory, final String regionCode, final String hl, final String token) throws IOException;
+    void getGuideCategories(final String regionCode, final String hl, final String token) throws IOException;
   }
 }

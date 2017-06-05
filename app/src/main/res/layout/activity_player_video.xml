@@ -313,7 +313,7 @@
             android:layout_gravity="center"
             tools:ignore="RtlHardcoded">
 
-            <TextView
+            <com.devspark.robototextview.widget.RobotoTextView
                 android:id="@+id/volumeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -330,9 +330,10 @@
                 android:visibility="gone"
                 tools:ignore="RtlHardcoded"
                 tools:text="Volume 0"
+                app:typeface="roboto_light"
                 tools:visibility="visible" />
 
-            <TextView
+            <com.devspark.robototextview.widget.RobotoTextView
                 android:id="@+id/brightnessTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -349,9 +350,10 @@
                 android:visibility="gone"
                 tools:ignore="RtlHardcoded"
                 tools:text="Brightness  0"
+                app:typeface="roboto_light"
                 tools:visibility="visible" />
 
-            <TextView
+            <com.devspark.robototextview.widget.RobotoTextView
                 android:id="@+id/currentDisplaySeek"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -368,6 +370,7 @@
                 android:visibility="gone"
                 tools:ignore="RtlHardcoded"
                 tools:text="1:06:29"
+                app:typeface="roboto_light"
                 tools:visibility="visible" />
         </RelativeLayout>
     </FrameLayout>
@@ -375,6 +378,6 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

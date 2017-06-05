@@ -30,6 +30,7 @@ import com.github.rubensousa.bottomsheetbuilder.BottomSheetBuilder;
 import com.github.rubensousa.bottomsheetbuilder.BottomSheetMenuDialog;
 import com.github.rubensousa.bottomsheetbuilder.adapter.BottomSheetItemClickListener;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.StreamExtractorWorker;
@@ -125,10 +126,10 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         presenter.onBindView(this);
         playerImpl = new VideoPlayerImpl();
-        playerImpl.setup(findViewById(android.R.id.content));
+        playerImpl.setup(findViewById(android.R.id.content), this);
         if (video != null) {
             try {
-                presenter.getVideoDetail(VideoCategory.VIDEODETAIL, null, video.getId());
+                presenter.getVideoDetail(null, video.getId());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -221,7 +222,16 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
         this.videoList.addAll(videoList);
         adapter.setList(this.videoList);
         adapter.notifyDataSetChanged();
-        Log.d(TAG, "onUpdateView: " + videoList.get(0).getSnippet().getTitle());
+        try {
+            presenter.getRelatedToVideoId(video.getId(), null, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onUpdateViewRelated(List<SearchResult> resultList) {
+        Log.d(TAG, "onUpdateViewRelated: " + resultList.get(0).getEtag());
     }
 
 
@@ -324,8 +334,9 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
                 .putExtra(BasePlayer.VIDEO_URL, info.webpage_url)
                 .putExtra(BasePlayer.VIDEO_THUMBNAIL_URL, info.thumbnail_url)
                 .putExtra(BasePlayer.CHANNEL_NAME, info.uploader)
-                .putExtra(VideoPlayer.INDEX_SEL_VIDEO_STREAM, 0)
-                .putExtra(VideoPlayer.VIDEO_STREAMS_LIST, Utils.getSortedStreamVideosList(this, info.video_streams, info.video_only_streams, false))
+                .putExtra(VideoPlayer.INDEX_QUALITY_VIDEO_STREAM, 0)
+                .putExtra(VideoPlayer.VIDEO_STREAMS_LIST,
+                        Utils.getSortedStreamVideosList(this, info.video_streams, info.video_only_streams, false))
                 .putExtra(VideoPlayer.VIDEO_ONLY_AUDIO_STREAM, Utils.getHighestQualityAudio(info.audio_streams));
         if (info.start_position > 0)
             mIntent.putExtra(BasePlayer.START_POSITION, info.start_position * 1000);

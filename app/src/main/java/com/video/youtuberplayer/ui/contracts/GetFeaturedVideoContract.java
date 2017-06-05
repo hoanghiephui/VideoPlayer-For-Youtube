@@ -18,11 +18,11 @@ import io.reactivex.Observable;
 
 public class GetFeaturedVideoContract {
   public interface IGetFeaturedVideoInterceptor {
-    Observable<VideoListResponse> getFeaturedVideo(VideoCategory videos, final long maxResults, final String token, final String tokenNextPage) throws IOException;
+    Observable<VideoListResponse> getFeaturedVideo(final long maxResults, final String token, final String tokenNextPage) throws IOException;
   }
 
   public interface IGetFeaturedVideoPresenter extends IPresenter<IGeFeaturedVideoView> {
-    void getFeaturedVideo(VideoCategory videos, long maxResults, String token, String tokenNextPage) throws IOException;
+    void getFeaturedVideo(long maxResults, String token, String tokenNextPage) throws IOException;
   }
 
   public interface IGeFeaturedVideoView extends IView {

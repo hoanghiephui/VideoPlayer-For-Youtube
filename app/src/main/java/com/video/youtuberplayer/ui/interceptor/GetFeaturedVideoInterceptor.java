@@ -24,7 +24,7 @@ public class GetFeaturedVideoInterceptor implements GetFeaturedVideoContract.IGe
   }
 
   @Override
-  public Observable<VideoListResponse> getFeaturedVideo(VideoCategory videos, long maxResults, String token, String tokenNextPage) throws IOException {
-    return videoMethod.getFeaturedVideo(videos, maxResults, token, tokenNextPage);
+  public Observable<VideoListResponse> getFeaturedVideo(long maxResults, String token, String tokenNextPage) throws IOException {
+    return videoMethod.getFeaturedVideo(maxResults, token, tokenNextPage);
   }
 }
