@@ -22,6 +22,7 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.video.youtuberplayer.R;
+import com.video.youtuberplayer.VideoPlayerApplication;
 import com.video.youtuberplayer.utils.ServerUtils;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -62,6 +63,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    VideoPlayerApplication.getVideoPlayerApp().addActivity(this);
     setContentView(getActivityBaseViewID());
     initPresenter();
     if (mToolbar != null) {

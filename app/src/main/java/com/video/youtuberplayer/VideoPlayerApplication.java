@@ -4,10 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.multidex.MultiDexApplication;
+import android.support.v7.app.AppCompatDelegate;
+
+import com.video.youtuberplayer.ui.view.activity.BaseActivity;
 
 import org.schabi.newpipe.extractor.NewPipe;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,11 +22,21 @@ import java.util.List;
  */
 
 public class VideoPlayerApplication extends MultiDexApplication {
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     public static final String KEY_SUBSCRIPTIONS_LAST_UPDATED = "KEY_SUBSCRIPTIONS_LAST_UPDATED";
+    private List<BaseActivity> activityList;
+
     /**
      * Application instance.
      */
     private static VideoPlayerApplication videoPlayerApp = null;
+
+    public static VideoPlayerApplication getVideoPlayerApp() {
+        return videoPlayerApp;
+    }
 
     /**
      * Returns a localised string.
@@ -75,7 +91,7 @@ public class VideoPlayerApplication extends MultiDexApplication {
      * @return {@link Context}.
      */
     public static Context getContext() {
-        return videoPlayerApp.getBaseContext();
+        return videoPlayerApp.getApplicationContext();
     }
 
     /**
@@ -92,6 +108,25 @@ public class VideoPlayerApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         videoPlayerApp = this;
+        activityList = new ArrayList<>();
         NewPipe.init(Downloader.getInstance());
+    }
+
+    public void addActivity(@NonNull BaseActivity a) {
+        for (BaseActivity activity : activityList) {
+            if (activity.equals(a)) {
+                return;
+            }
+        }
+        activityList.add(a);
+    }
+
+    @Nullable
+    public BaseActivity getTopActivity() {
+        if (activityList != null && activityList.size() > 0) {
+            return activityList.get(activityList.size() - 1);
+        } else {
+            return null;
+        }
     }
 }

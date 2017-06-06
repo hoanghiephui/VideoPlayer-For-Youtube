@@ -21,6 +21,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -37,6 +38,7 @@ import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -124,7 +126,9 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
     }
 
     public void setup() {
-        if (simpleExoPlayer == null) initPlayer();
+        if (simpleExoPlayer == null) {
+            initPlayer();
+        }
         initListeners();
     }
 
@@ -147,11 +151,18 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
         if (DEBUG) Log.d(TAG, "initPlayer() called with: context = [" + context + "]");
         initExoPlayerCache();
 
-        AdaptiveTrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        DefaultTrackSelector defaultTrackSelector = new DefaultTrackSelector(trackSelectionFactory);
-        DefaultLoadControl loadControl = new DefaultLoadControl();
+        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(context,
+                null, 0);
 
-        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(context, defaultTrackSelector, loadControl);
+        TrackSelection.Factory adaptiveTrackSelectionFactory =
+                new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
+        DefaultTrackSelector trackSelector = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
+
+        /*AdaptiveTrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        DefaultTrackSelector defaultTrackSelector = new DefaultTrackSelector(trackSelectionFactory);
+        DefaultLoadControl loadControl = new DefaultLoadControl();*/
+
+        simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector);
         simpleExoPlayer.addListener(this);
     }
 
@@ -252,7 +263,8 @@ public abstract class BasePlayer implements ExoPlayer.EventListener, AudioManage
         MediaSource mediaSource;
         switch (type) {
             case C.TYPE_SS:
-                mediaSource = new SsMediaSource(uri, cacheDataSourceFactory, new DefaultSsChunkSource.Factory(cacheDataSourceFactory), null, null);
+                mediaSource = new SsMediaSource(uri, cacheDataSourceFactory,
+                        new DefaultSsChunkSource.Factory(cacheDataSourceFactory), null, null);
                 break;
             case C.TYPE_DASH:
                 mediaSource = new DashMediaSource(uri, cacheDataSourceFactory, new DefaultDashChunkSource.Factory(cacheDataSourceFactory), null, null);

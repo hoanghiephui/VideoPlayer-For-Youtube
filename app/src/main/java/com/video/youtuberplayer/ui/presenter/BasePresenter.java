@@ -28,8 +28,9 @@ public abstract class BasePresenter<V extends IView, I> implements IPresenter<V>
     if (mView != null)
       mView = null;
 
-    if (mSubscribers != null)
+    if (mSubscribers != null) {
       mSubscribers.dispose();
+    }
 
   }
 

@@ -134,9 +134,12 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
                 e.printStackTrace();
             }
             adapter = new VideoPlayerMoreAdapter(videoList, this);
-            recyclerView.setNestedScrollingEnabled(false);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setNestedScrollingEnabled(true);
+            recyclerView.setHasFixedSize(false);
+            recyclerView.setLayoutManager(new LinearLayoutManager(
+                    this,
+                    LinearLayoutManager.VERTICAL,
+                    false));
             recyclerView.setAdapter(adapter);
             videoUrl = video.getVideoUrl();
             videoTitle = video.getTitle();
@@ -219,19 +222,21 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
 
     @Override
     public void onUpdateView(List<Video> videoList) {
-        this.videoList.addAll(videoList);
-        adapter.setList(this.videoList);
-        adapter.notifyDataSetChanged();
         try {
             presenter.getRelatedToVideoId(video.getId(), null, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        this.videoList.clear();
+        this.videoList.addAll(videoList);
+        adapter.setList(this.videoList);
+        adapter.notifyItemChanged(0);
     }
 
     @Override
     public void onUpdateViewRelated(List<SearchResult> resultList) {
         Log.d(TAG, "onUpdateViewRelated: " + resultList.get(0).getEtag());
+        adapter.setResultList(resultList);
     }
 
 
@@ -379,28 +384,24 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
 
     private void showSystemUi() {
         Log.d(TAG, "showSystemUi() called");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            );
-        } else getWindow().getDecorView().setSystemUiVisibility(0);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        );
         //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     private void hideSystemUi() {
         Log.d(TAG, "hideSystemUi() called");
-        if (android.os.Build.VERSION.SDK_INT >= 16) {
-            int visibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT)
-                visibility |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            getWindow().getDecorView().setSystemUiVisibility(visibility);
-        }
+        int visibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            visibility |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        getWindow().getDecorView().setSystemUiVisibility(visibility);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
@@ -415,6 +416,16 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     @Override
     public void onShowPopup() {
         openInPopup();
+    }
+
+    @Override
+    public void onClickVideoContent(SearchResult searchResult) {
+        try {
+            presenter.getVideoDetail(null, searchResult.getId().getVideoId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        selectAndLoadVideo(0, "https://youtu.be/" + searchResult.getId().getVideoId(), searchResult.getSnippet().getTitle());
     }
 
 

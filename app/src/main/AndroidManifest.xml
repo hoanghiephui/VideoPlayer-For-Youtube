@@ -35,7 +35,8 @@
         <activity android:name=".ui.view.activity.ListDefaultActivity" />
         <activity
             android:name=".ui.view.activity.PlayerVideoActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <service android:name=".ui.player.PopupVideoPlayer" />
     </application>

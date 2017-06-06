@@ -48,7 +48,7 @@ public class GetVideoDetailPresenter extends BasePresenter<GetVideoDetailContrac
         return new Observer<List<SearchResult>>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
-                mSubscribers.dispose();
+                mSubscribers.add(d);
             }
 
             @Override
