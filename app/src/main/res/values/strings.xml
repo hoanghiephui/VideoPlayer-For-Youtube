@@ -104,4 +104,7 @@
     <string name="best_resolution">Best resolution</string>
     <string name="webm_description">WebM — free format</string>
     <string name="m4a_description">m4a — better quality</string>
+    <string name="general_error">Error</string>
+    <string name="retry">Retry</string>
+    <string name="upload_date_text">Published on %1$s</string>
 </resources>

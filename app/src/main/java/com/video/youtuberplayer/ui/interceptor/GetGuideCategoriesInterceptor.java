@@ -1,9 +1,7 @@
 package com.video.youtuberplayer.ui.interceptor;
 
 import com.google.api.services.youtube.model.GuideCategory;
-import com.video.youtuberplayer.model.GetYouTubeVideos;
-import com.video.youtuberplayer.model.VideoCategory;
-import com.video.youtuberplayer.remote.mothods.VideoMethod;
+import com.video.youtuberplayer.remote.methods.VideoMethod;
 import com.video.youtuberplayer.ui.contracts.GuideCategoriesContract;
 
 import java.io.IOException;

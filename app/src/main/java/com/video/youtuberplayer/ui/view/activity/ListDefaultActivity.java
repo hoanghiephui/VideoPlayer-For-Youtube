@@ -56,6 +56,11 @@ public class ListDefaultActivity extends BaseActivity {
     return 0;
   }
 
+  @Override
+  protected void reloadContent() {
+
+  }
+
   private void onUpdateUI() {
     Fragment fragment = null;
     switch (mListActivityDTO.getListType()) {

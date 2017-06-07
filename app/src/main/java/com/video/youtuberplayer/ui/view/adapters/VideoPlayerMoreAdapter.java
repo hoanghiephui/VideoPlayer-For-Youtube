@@ -1,28 +1,36 @@
 package com.video.youtuberplayer.ui.view.adapters;
 
+import android.app.Application;
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.C;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.utils.DisplayUtils;
+import com.video.youtuberplayer.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.video.youtuberplayer.utils.ViewUtils.localizeDate;
 import static com.video.youtuberplayer.utils.ViewUtils.localizeViewCount;
 
 /**
@@ -37,6 +45,8 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<VideoPlayerMore
     private List<SearchResult> resultList;
     private OnListenAdapter onListenAdapter;
     private List<Integer> typeList; // information of view holder.
+    private String urlImageChannel;
+
 
     public VideoPlayerMoreAdapter(List<Video> list, OnListenAdapter onListenAdapter) {
         this.list = list;
@@ -48,7 +58,8 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<VideoPlayerMore
 
     public void setList(List<Video> list) {
         this.list = list;
-        //buildTypeList();
+        buildTypeList();
+        notifyItemChanged(0);
     }
 
     public void setResultList(List<SearchResult> resultList) {
@@ -56,9 +67,13 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<VideoPlayerMore
             this.resultList.clear();
         }
         this.resultList = resultList;
-        notifyDataSetChanged();
+        notifyItemChanged(1);
     }
 
+    public void setUrlImageChannel(String urlImageChannel) {
+        this.urlImageChannel = urlImageChannel;
+        notifyItemChanged(0);
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -68,81 +83,30 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<VideoPlayerMore
             case FOOTER:
                 return new FooterHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_footer, parent, false));
             default:
-                return new ViewContent(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_stream, parent, false));
+                return new ViewContent(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_content, parent, false));
         }
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Context context = holder.itemView.getContext();
-        if (holder.getItemViewType() == HEADER) {
-            if (list.size() == 0) {
-                return;
-            }
-            Video video = list.get(0);
-            if (holder instanceof ViewHeader) {
-                ((ViewHeader) holder).title.setText(video.getSnippet().getTitle());
-                ((ViewHeader) holder).count_view.setText(localizeViewCount(video.getStatistics().getViewCount().longValue(), context));
-                if (video.getStatistics().getLikeCount() != null) {
-                    ((ViewHeader) holder).detail_like.setText(localizeViewCount(video.getStatistics().getLikeCount().longValue(), context));
-                }
-
-                if (video.getStatistics().getDislikeCount() != null) {
-                    ((ViewHeader) holder).detail_dislike.setText(localizeViewCount(video.getStatistics().getDislikeCount().longValue(), context));
-                }
-
-                ((ViewHeader) holder).uploader.setText(video.getSnippet().getChannelTitle());
-                //((ViewHeader) holder).countSub.setText(localizeViewCount(video.getStatistics().g));
-                ((ViewHeader) holder).viewPopup.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        onListenAdapter.onShowPopup();
-                    }
-                });
-            }
-        } else if (holder.getItemViewType() == CONTENT ){
-            if (holder instanceof ViewContent) {
-                final SearchResult video = resultList.get(position -1);
-                ((ViewContent)holder).itemVideoTitleView.setText(video.getSnippet().getTitle());
-                Glide.with(holder.itemView.getContext())
-                        .load(video.getSnippet().getThumbnails().getHigh().getUrl())
-                        .into(((ViewContent)holder).itemThumbnailView);
-
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        onListenAdapter.onClickVideoContent(video);
-                    }
-                });
-            }
-        }
-    }
-
-    @Override
-    public void onViewRecycled(ViewHolder holder) {
-        super.onViewRecycled(holder);
-        holder.onRecycled();
+        holder.onBindView(holder.itemView.getContext(), list, onListenAdapter);
+        holder.onBindView(resultList, onListenAdapter);
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
-          return HEADER;
-        } else {
-            if (position == getItemCount() - 1) {
-                return FOOTER;
-            } else {
-                return CONTENT;
-            }
-        }
+        return typeList.get(position);
     }
 
     @Override
     public int getItemCount() {
-        return resultList.size() + 2;
+        return typeList.size();
     }
 
     private void buildTypeList() {
+        if (typeList.size() > 0) {
+            typeList.clear();
+        }
         typeList.add(0, HEADER);
         typeList.add(1, CONTENT);
         typeList.add(2, FOOTER);
@@ -166,6 +130,14 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<VideoPlayerMore
         CircleImageView avatar;
         @BindView(R.id.detail_uploader_text_view)
         TextView uploader;
+        @BindView(R.id.detail_toggle_description_view)
+        AppCompatImageView videoTitleToggleArrow;
+        @BindView(R.id.detail_description_root_layout)
+        RelativeLayout videoDescriptionRootLayout;
+        @BindView(R.id.detail_upload_date_view)
+        TextView videoUploadDateView;
+        @BindView(R.id.detail_description_view)
+        TextView videoDescriptionView;
 
         @Override
         protected boolean hasFooter() {
@@ -179,6 +151,7 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<VideoPlayerMore
 
         @Override
         protected void onBindView(Context context, List<Video> videoList, final OnListenAdapter onListenAdapter) {
+            videoDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
             if (videoList.size() == 0) {
                 return;
             }
@@ -201,6 +174,21 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<VideoPlayerMore
                     onListenAdapter.onShowPopup();
                 }
             });
+
+            if (urlImageChannel != null) {
+                ViewUtils.onShowImage(avatar, urlImageChannel);
+            }
+
+            String description = video.getSnippet().getDescription();
+            if (!TextUtils.isEmpty(description)) { //noinspection deprecation
+                videoDescriptionView.setText(description);
+            }
+            videoDescriptionView.setVisibility(!TextUtils.isEmpty(description) ? View.VISIBLE : View.GONE);
+
+            if (!TextUtils.isEmpty(video.getSnippet().getPublishedAt().toString())) {
+                videoUploadDateView.setText(localizeDate(video.getSnippet().getPublishedAt().toStringRfc3339(), context));
+            }
+            videoUploadDateView.setVisibility(!TextUtils.isEmpty(video.getSnippet().getPublishedAt().toString()) ? View.VISIBLE : View.GONE);
         }
 
         @Override
@@ -212,22 +200,29 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<VideoPlayerMore
         protected void onRecycled() {
 
         }
+
+        @OnClick(R.id.detail_toggle_description_view)
+        public void onClickToggle(){
+            toggleTitleAndDescription();
+        }
+
+        private void toggleTitleAndDescription() {
+            if (videoDescriptionRootLayout.getVisibility() == View.VISIBLE) {
+                title.setMaxLines(1);
+                videoDescriptionRootLayout.setVisibility(View.GONE);
+                videoTitleToggleArrow.setImageResource(R.drawable.ic_arrow_drop_down_grey_600_24dp);
+            } else {
+                title.setMaxLines(10);
+                videoDescriptionRootLayout.setVisibility(View.VISIBLE);
+                videoTitleToggleArrow.setImageResource(R.drawable.ic_arrow_drop_up_grey_600_24dp);
+            }
+        }
     }
 
     class ViewContent extends ViewHolder {
 
-        @BindView(R.id.itemThumbnailView)
-        AppCompatImageView itemThumbnailView;
-        @BindView(R.id.itemDurationView)
-        TextView itemDurationView;
-        @BindView(R.id.itemVideoTitleView)
-        TextView itemVideoTitleView;
-        @BindView(R.id.itemUploaderView)
-        TextView itemUploaderView;
-        @BindView(R.id.itemUploadDateView)
-        TextView itemUploadDateView;
-        @BindView(R.id.itemViewCountView)
-        TextView itemViewCountView;
+        @BindView(R.id.recyclerView)
+        RecyclerView recyclerView;
 
         @Override
         protected boolean hasFooter() {
@@ -238,7 +233,11 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<VideoPlayerMore
         ViewContent(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-
+            recyclerView.setLayoutManager(
+                    new LinearLayoutManager(
+                            itemView.getContext(),
+                            LinearLayoutManager.VERTICAL,
+                            false));
         }
 
         @Override
@@ -248,7 +247,7 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<VideoPlayerMore
 
         @Override
         protected void onBindView(List<SearchResult> resultList, OnListenAdapter onListenAdapter) {
-
+            recyclerView.setAdapter(new NextVideoAdapter(resultList, onListenAdapter));
         }
 
         @Override

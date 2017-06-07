@@ -174,6 +174,18 @@ public class Utils {
                 .putExtra(BasePlayer.START_POSITION, ((int) instance.getPlayer().getCurrentPosition()));
     }
 
+    public static Intent getOpenVideoPlayerIntent(VideoPlayer instance) {
+        return new Intent()
+                .putExtra(BasePlayer.VIDEO_TITLE, instance.getVideoTitle())
+                .putExtra(BasePlayer.VIDEO_URL, instance.getVideoUrl())
+                .putExtra(BasePlayer.VIDEO_THUMBNAIL_URL, instance.getVideoThumbnailUrl())
+                .putExtra(BasePlayer.CHANNEL_NAME, instance.getChannelName())
+                .putExtra(VideoPlayer.INDEX_QUALITY_VIDEO_STREAM, instance.getSelectedStreamIndex())
+                .putExtra(VideoPlayer.VIDEO_STREAMS_LIST, instance.getVideoStreamsList())
+                .putExtra(VideoPlayer.VIDEO_ONLY_AUDIO_STREAM, instance.getAudioStream())
+                .putExtra(BasePlayer.START_POSITION, ((int) instance.getPlayer().getCurrentPosition() / 1000));
+    }
+
     public static int getPopupDefaultResolution(Context context, List<VideoStream> videoStreams) {
         SharedPreferences defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         if (defaultPreferences == null) return 0;
@@ -185,6 +197,19 @@ public class Utils {
         String preferredFormat = defaultPreferences
                 .getString(context.getString(R.string.preferred_video_format_key),
                         context.getString(R.string.preferred_video_format_default));
+
+        return getDefaultResolution(defaultResolution, preferredFormat, videoStreams);
+    }
+
+    public static int getDefaultResolution(Context context, List<VideoStream> videoStreams) {
+        SharedPreferences defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (defaultPreferences == null) return 0;
+
+        String defaultResolution = defaultPreferences
+                .getString(context.getString(R.string.default_resolution_key), context.getString(R.string.default_resolution_value));
+
+        String preferredFormat = defaultPreferences
+                .getString(context.getString(R.string.preferred_video_format_key), context.getString(R.string.preferred_video_format_default));
 
         return getDefaultResolution(defaultResolution, preferredFormat, videoStreams);
     }

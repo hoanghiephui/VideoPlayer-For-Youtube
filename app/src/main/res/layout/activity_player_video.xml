@@ -328,9 +328,9 @@
                 android:textColor="@android:color/white"
                 android:textSize="35sp"
                 android:visibility="gone"
+                app:typeface="roboto_light"
                 tools:ignore="RtlHardcoded"
                 tools:text="Volume 0"
-                app:typeface="roboto_light"
                 tools:visibility="visible" />
 
             <com.devspark.robototextview.widget.RobotoTextView
@@ -348,9 +348,9 @@
                 android:textColor="@android:color/white"
                 android:textSize="35sp"
                 android:visibility="gone"
+                app:typeface="roboto_light"
                 tools:ignore="RtlHardcoded"
                 tools:text="Brightness  0"
-                app:typeface="roboto_light"
                 tools:visibility="visible" />
 
             <com.devspark.robototextview.widget.RobotoTextView
@@ -368,16 +368,32 @@
                 android:textSize="26sp"
                 android:textStyle="bold"
                 android:visibility="gone"
+                app:typeface="roboto_light"
                 tools:ignore="RtlHardcoded"
                 tools:text="1:06:29"
-                app:typeface="roboto_light"
                 tools:visibility="visible" />
         </RelativeLayout>
     </FrameLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <include
+            android:id="@+id/error_panel"
+            layout="@layout/error_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/video_item_detail_error_panel_margin"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </FrameLayout>
+
 
 </LinearLayout>

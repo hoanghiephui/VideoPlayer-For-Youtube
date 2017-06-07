@@ -4,13 +4,9 @@ package com.video.youtuberplayer.model;
  * Created by hoanghiep on 5/5/17.
  */
 
-import android.util.Log;
-
 import com.video.youtuberplayer.api.GetFeaturedVideos;
-import com.video.youtuberplayer.api.GetGuideCategories;
 import com.video.youtuberplayer.api.GetVideoDetail;
 import com.video.youtuberplayer.api.base.BaseVideoDetail;
-import com.video.youtuberplayer.remote.mothods.VideoMethod;
 
 import java.io.IOException;
 

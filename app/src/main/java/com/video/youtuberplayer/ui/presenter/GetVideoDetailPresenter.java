@@ -2,6 +2,7 @@ package com.video.youtuberplayer.ui.presenter;
 
 import android.util.Log;
 
+import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.ui.contracts.GetVideoDetailContract;
@@ -42,6 +43,38 @@ public class GetVideoDetailPresenter extends BasePresenter<GetVideoDetailContrac
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onRelatedToVideoId());
+    }
+
+    @Override
+    public void getChannel(String id) throws IOException {
+        mInterceptor.geChannel(id)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onChannel());
+    }
+
+    private Observer<? super ChannelListResponse> onChannel() {
+        return new Observer<ChannelListResponse>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                mSubscribers.add(d);
+            }
+
+            @Override
+            public void onNext(@NonNull ChannelListResponse channelListResponse) {
+                mView.onUpdateChannel(channelListResponse);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
     }
 
     private Observer<? super List<SearchResult>> onRelatedToVideoId() {

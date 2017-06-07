@@ -17,9 +17,6 @@ public class GetChannel {
   public GetChannel(String channelId) throws IOException {
     YouTube youtube = YouTubeAPI.create();
     YouTube.Channels.List channelInfo = youtube.channels().list("snippet, statistics, brandingSettings");
-    channelInfo.setFields("items(id, snippet/title, snippet/description, snippet/thumbnails/default," +
-            "statistics/subscriberCount, brandingSettings/image/bannerTabletHdImageUrl)," +
-            "nextPageToken");
     channelInfo.setKey(YouTubeAPIKey.get().getYouTubeAPIKey());
     channelInfo.setId(channelId);
     response = channelInfo.execute();

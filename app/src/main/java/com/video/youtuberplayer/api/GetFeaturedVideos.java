@@ -43,10 +43,6 @@ public class GetFeaturedVideos extends GetYouTubeVideos {
 
   public GetFeaturedVideos(final long maxResults, final String token, String tokenNextPage) throws IOException{
     videosList = YouTubeAPI.create().videos().list("snippet, statistics, contentDetails, liveStreamingDetails");
-    videosList.setFields("items(id, snippet/defaultAudioLanguage, snippet/defaultLanguage, snippet/publishedAt, " +
-            "snippet/title, snippet/channelId, snippet/channelTitle," +
-            "snippet/thumbnails/high, contentDetails/duration, statistics)," +
-            "nextPageToken");
     videosList.setKey(YouTubeAPIKey.get().getYouTubeAPIKey());
     videosList.setChart("mostPopular");
     videosList.setRegionCode(getLocaleCountryISO());

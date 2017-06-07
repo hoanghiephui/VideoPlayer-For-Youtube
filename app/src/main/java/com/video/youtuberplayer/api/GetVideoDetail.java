@@ -21,10 +21,6 @@ public class GetVideoDetail extends BaseVideoDetail {
 
   public GetVideoDetail(String token, String id) throws IOException {
     videosList = YouTubeAPI.create().videos().list("snippet, statistics, contentDetails");
-    videosList.setFields("items(id, snippet/defaultAudioLanguage, snippet/defaultLanguage, snippet/publishedAt, " +
-            "snippet/title, snippet/channelId, snippet/channelTitle," +
-            "snippet/thumbnails/high, contentDetails/duration, statistics)," +
-            "nextPageToken");
     videosList.setKey(YouTubeAPIKey.get().getYouTubeAPIKey());
     videosList.setId(id);
     listVideo = videosList.execute().getItems();

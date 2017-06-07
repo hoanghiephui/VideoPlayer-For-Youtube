@@ -1,4 +1,4 @@
-package com.video.youtuberplayer.remote.mothods;
+package com.video.youtuberplayer.remote.methods;
 
 import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.GuideCategory;
@@ -10,18 +10,14 @@ import com.video.youtuberplayer.api.GetFeaturedVideos;
 import com.video.youtuberplayer.api.GetGuideCategories;
 import com.video.youtuberplayer.api.GetRelatedVideos;
 import com.video.youtuberplayer.api.GetVideoDetail;
-import com.video.youtuberplayer.model.GetYouTubeVideos;
-import com.video.youtuberplayer.model.VideoCategory;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
 
 /**
  * Created by hoanghiep on 5/5/17.
@@ -70,8 +66,14 @@ public class VideoMethod {
         });
     }
 
-    public Observable<ChannelListResponse> getChannelYoutube(String id) throws IOException {
-        return Observable.just(new GetChannel(id).getResponse());
+    public Observable<ChannelListResponse> getChannelYoutube(final String id) throws IOException {
+        return Observable.create(new ObservableOnSubscribe<ChannelListResponse>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<ChannelListResponse> e) throws Exception {
+                e.onNext(new GetChannel(id).getResponse());
+                e.onComplete();
+            }
+        });
     }
   /*try {
     YouTube.Activities.List videosList = YouTubeAPI.create()

@@ -1,5 +1,6 @@
 package com.video.youtuberplayer.ui.contracts;
 
+import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.model.VideoCategory;
@@ -20,6 +21,8 @@ public class GetVideoDetailContract {
     Observable<List<Video>> getVideoDetail(String token, String id) throws IOException;
 
     Observable<List<SearchResult>> getRelatedToVideoId(String id, String token, String tokenPage) throws IOException;
+
+    Observable<ChannelListResponse> geChannel(String id) throws IOException;
   }
 
   public interface IGetVideoDetailPresenter extends IPresenter<IGetVideoDetailView> {
@@ -27,6 +30,8 @@ public class GetVideoDetailContract {
     void getVideoDetail(String token, String id) throws IOException;
 
     void getRelatedToVideoId(String id, String token, String tokenPage) throws IOException;
+
+    void getChannel(String id) throws IOException;
   }
 
   public interface IGetVideoDetailView extends IView {
@@ -34,5 +39,7 @@ public class GetVideoDetailContract {
     void onUpdateView(List<Video> videoList);
 
     void onUpdateViewRelated(List<SearchResult> resultList);
+
+    void onUpdateChannel(ChannelListResponse channelListResponse);
   }
 }

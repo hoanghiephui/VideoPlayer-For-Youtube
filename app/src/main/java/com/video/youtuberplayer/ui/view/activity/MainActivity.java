@@ -7,6 +7,8 @@ import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.ui.view.fragment.MainFragment;
 
 public class MainActivity extends BaseActivity {
+  private boolean isResume;
+
   @Override
   protected void initPresenter() {
 
@@ -33,6 +35,11 @@ public class MainActivity extends BaseActivity {
     return 0;
   }
 
+  @Override
+  protected void reloadContent() {
+
+  }
+
   private void onSetupDrawerLayout() {
     ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
       this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -40,5 +47,21 @@ public class MainActivity extends BaseActivity {
       mDrawerLayout.addDrawerListener(actionBarDrawerToggle);
     }
     actionBarDrawerToggle.syncState();
+  }
+
+  public boolean isResume() {
+    return isResume;
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    isResume = false;
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    isResume = true;
   }
 }

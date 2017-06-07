@@ -71,6 +71,11 @@ public class ReCaptchaActivity extends BaseActivity {
         return 0;
     }
 
+    @Override
+    protected void reloadContent() {
+
+    }
+
     private class ReCaptchaWebViewClient extends WebViewClient {
         private Activity context;
         private String mCookies;

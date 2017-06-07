@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.R;
@@ -62,6 +63,11 @@ public class PlayerVideoFullActivity extends BaseActivity implements GetVideoDet
     }
 
     @Override
+    protected void reloadContent() {
+
+    }
+
+    @Override
     public void setProgressVisibility(int visibityState) {
 
     }
@@ -78,6 +84,11 @@ public class PlayerVideoFullActivity extends BaseActivity implements GetVideoDet
 
     @Override
     public void onUpdateViewRelated(List<SearchResult> resultList) {
+
+    }
+
+    @Override
+    public void onUpdateChannel(ChannelListResponse channelListResponse) {
 
     }
 

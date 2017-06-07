@@ -1,6 +1,8 @@
 package com.video.youtuberplayer.ui.player;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -12,6 +14,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -36,6 +39,7 @@ import com.video.youtuberplayer.BuildConfig;
 import com.video.youtuberplayer.Constants;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.StreamExtractorWorker;
+import com.video.youtuberplayer.VideoPlayerApplication;
 import com.video.youtuberplayer.ui.view.activity.MainActivity;
 import com.video.youtuberplayer.ui.view.activity.PlayerVideoActivity;
 import com.video.youtuberplayer.ui.view.activity.ReCaptchaActivity;
@@ -45,7 +49,10 @@ import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.stream_info.StreamInfo;
 
+import java.util.ArrayList;
+
 import static com.video.youtuberplayer.utils.AnimationUtils.animateView;
+import static com.video.youtuberplayer.utils.Utils.getOpenVideoPlayerIntent;
 
 /**
  * Created by hoanghiep on 6/2/17.
@@ -75,10 +82,11 @@ public class PopupVideoPlayer extends Service {
     private float minimumWidth, minimumHeight;
     private float maximumWidth, maximumHeight;
 
-    private final String setAlphaMethodName = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) ? "setImageAlpha" : "setAlpha";
+    private final String setAlphaMethodName = "setImageAlpha";
     private NotificationManager notificationManager;
     private NotificationCompat.Builder notBuilder;
     private RemoteViews notRemoteView;
+
 
 
     private VideoPlayerImpl playerImpl;
@@ -92,7 +100,6 @@ public class PopupVideoPlayer extends Service {
     public void onCreate() {
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         notificationManager = ((NotificationManager) getSystemService(NOTIFICATION_SERVICE));
-
         playerImpl = new VideoPlayerImpl();
     }
 
@@ -138,7 +145,11 @@ public class PopupVideoPlayer extends Service {
             currentExtractorWorker.cancel();
             currentExtractorWorker = null;
         }
-
+        Application.ActivityLifecycleCallbacks activityCallbacks = ((VideoPlayerApplication)getApplication()).getActivityCallbacks();
+        if (activityCallbacks != null) {
+            getApplication().unregisterActivityLifecycleCallbacks(activityCallbacks);
+            ((VideoPlayerApplication)getApplication()).setActivityCallbacks(null);
+        }
         savePositionAndSize();
     }
 
@@ -146,6 +157,8 @@ public class PopupVideoPlayer extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+
 
     /*//////////////////////////////////////////////////////////////////////////
     // Init
@@ -380,15 +393,26 @@ public class PopupVideoPlayer extends Service {
         @Override
         public void onFullScreenButtonClicked() {
             if (DEBUG) Log.d(TAG, "onFullScreenButtonClicked() called");
-            Intent intent;
-            intent = Utils.getOpenVideoPlayerIntent(context, PlayerVideoActivity.class, playerImpl);
-            if (!playerImpl.isStartedFromNewPipe()) {
-                intent.putExtra(VideoPlayer.STARTED_FROM_NEWPIPE, false);
-            }
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
-            if (playerImpl != null) {
-                playerImpl.destroyPlayer();
+            ArrayList<Activity> activities = ((VideoPlayerApplication)getApplication()).getActivities();
+            for (Activity activity : activities) {
+                if (activity instanceof PlayerVideoActivity) {
+                    ((VideoPlayerApplication)getApplication()).rxBus().send((getOpenVideoPlayerIntent(playerImpl)));
+                    break;
+                } else {
+                    if (((MainActivity) activity).isResume()){
+                        Intent intent;
+                        intent = Utils.getOpenVideoPlayerIntent(context, PlayerVideoActivity.class, playerImpl);
+                        if (!playerImpl.isStartedFromNewPipe()) {
+                            intent.putExtra(VideoPlayer.STARTED_FROM_NEWPIPE, false);
+                        }
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                        if (playerImpl != null) {
+                            playerImpl.destroyPlayer();
+                        }
+                        break;
+                    }
+                }
             }
             stopSelf();
         }

@@ -30,11 +30,11 @@ import com.github.rubensousa.bottomsheetbuilder.BottomSheetBuilder;
 import com.github.rubensousa.bottomsheetbuilder.BottomSheetMenuDialog;
 import com.github.rubensousa.bottomsheetbuilder.adapter.BottomSheetItemClickListener;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.StreamExtractorWorker;
-import com.video.youtuberplayer.model.VideoCategory;
 import com.video.youtuberplayer.model.VideoDuration;
 import com.video.youtuberplayer.model.YouTubeVideo;
 import com.video.youtuberplayer.ui.contracts.GetVideoDetailContract;
@@ -45,10 +45,13 @@ import com.video.youtuberplayer.ui.player.VideoPlayer;
 import com.video.youtuberplayer.ui.presenter.GetVideoDetailPresenter;
 import com.video.youtuberplayer.ui.view.adapters.VideoPlayerMoreAdapter;
 import com.video.youtuberplayer.utils.AnimationUtils;
+import com.video.youtuberplayer.utils.DisplayUtils;
 import com.video.youtuberplayer.utils.PermissionHelper;
 import com.video.youtuberplayer.utils.Utils;
+import com.video.youtuberplayer.utils.ViewUtils;
 
 import org.schabi.newpipe.extractor.stream_info.StreamInfo;
+import org.schabi.newpipe.extractor.stream_info.VideoStream;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,7 +61,11 @@ import butterknife.BindView;
 import io.reactivex.disposables.CompositeDisposable;
 
 import static com.video.youtuberplayer.utils.AnimationUtils.animateView;
+import static com.video.youtuberplayer.utils.DisplayUtils.convertDpToPixel;
+import static com.video.youtuberplayer.utils.DisplayUtils.convertPixelsToDp;
+import static com.video.youtuberplayer.utils.Utils.getOpenVideoPlayerIntent;
 import static com.video.youtuberplayer.utils.ViewUtils.onShowImage;
+import static com.video.youtuberplayer.utils.ViewUtils.showSnackToast;
 
 /**
  * Created by hoanghiep on 5/7/17.
@@ -85,6 +92,8 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     RelativeLayout detailThumb;
     @BindView(R.id.viewTitle)
     View viewTitle;
+
+    private boolean isLand = false;
 
     private VideoPlayerMoreAdapter adapter;
     private List<Video> videoList = new ArrayList<>();
@@ -154,6 +163,9 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
             playerImpl.handleIntent(getIntent());
             viewVideo.getLayoutParams().height = FrameLayout.LayoutParams.MATCH_PARENT;
             viewVideo.getLayoutParams().width = FrameLayout.LayoutParams.MATCH_PARENT;
+            int naviga = DisplayUtils.getNavigation(this);
+            DisplayUtils.setMargins(playerImpl.getBottomControlsRoot(), 0, 0, naviga != 0 ? naviga : 0, 0);
+            DisplayUtils.setMargins(playerImpl.getTopControlsRoot(), 0, 0, naviga != 0 ? naviga : 0, 0);
             viewVideo.requestLayout();
             toggleOrientation();
         }
@@ -184,6 +196,14 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     protected void initPresenter() {
         interceptor = new GetVideoDetailInterceptor();
         presenter = new GetVideoDetailPresenter(interceptor, new CompositeDisposable());
+    }
+
+    @Override
+    public void onSubscribeEvent(Object object) {
+        super.onSubscribeEvent(object);
+        if (object instanceof Intent) {
+            playerImpl.handleIntent((Intent) object);
+        }
     }
 
     private void showBottomMenu() {
@@ -224,19 +244,26 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     public void onUpdateView(List<Video> videoList) {
         try {
             presenter.getRelatedToVideoId(videoList.get(0).getId(), null, null);
+            presenter.getChannel(videoList.get(0).getSnippet().getChannelId());
         } catch (IOException e) {
             e.printStackTrace();
         }
         this.videoList.clear();
         this.videoList.addAll(videoList);
         adapter.setList(this.videoList);
-        adapter.notifyItemChanged(0);
     }
 
     @Override
     public void onUpdateViewRelated(List<SearchResult> resultList) {
         Log.d(TAG, "onUpdateViewRelated: " + resultList.get(0).getEtag());
         adapter.setResultList(resultList);
+    }
+
+    @Override
+    public void onUpdateChannel(ChannelListResponse channelListResponse) {
+        Log.d(TAG, "onUpdateChannel: " + channelListResponse.getItems().get(0).getSnippet().getTitle());
+        String thumb = ViewUtils.thumbnailNormalUrl(channelListResponse.getItems().get(0));
+        adapter.setUrlImageChannel(thumb);
     }
 
 
@@ -249,12 +276,13 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
             return;
         }
 
-        startService(Utils.getOpenVideoPlayerIntent(this, PopupVideoPlayer.class, playerImpl));
+        startService(getOpenVideoPlayerIntent(this, PopupVideoPlayer.class, playerImpl));
         if (playerImpl != null) {
             playerImpl.destroyPlayer();
         }
 
-         ((View)playerImpl. getControlAnimationView().getParent()).setVisibility(View.GONE);
+        assert playerImpl != null;
+        ((View) playerImpl.getControlAnimationView().getParent()).setVisibility(View.GONE);
     }
 
 
@@ -299,9 +327,24 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
         super.onConfigurationChanged(newConfig);
         switch (newConfig.orientation) {
             case Configuration.ORIENTATION_LANDSCAPE:
-                hideSystemUi();
+                ((View)playerImpl.getControlAnimationView().getParent()).setVisibility(View.GONE);
+                viewVideo.getLayoutParams().height = FrameLayout.LayoutParams.MATCH_PARENT;
+                viewVideo.getLayoutParams().width = FrameLayout.LayoutParams.MATCH_PARENT;
+                int naviga = DisplayUtils.getNavigation(this);
+                DisplayUtils.setMargins(playerImpl.getBottomControlsRoot(), 0, 0, naviga != 0 ? naviga : 0, 0);
+                DisplayUtils.setMargins(playerImpl.getTopControlsRoot(), 0, 0, naviga != 0 ? naviga : 0, 0);
+                viewVideo.requestLayout();
+                isLand = true;
                 break;
             default:
+                ((View)playerImpl.getControlAnimationView().getParent()).setVisibility(View.GONE);
+                viewVideo.getLayoutParams().width = FrameLayout.LayoutParams.MATCH_PARENT;
+                viewVideo.getLayoutParams().height = (int) getResources().getDimension(R.dimen.recycler_view_min_height);
+                DisplayUtils.setMargins(playerImpl.getBottomControlsRoot(), 0, 0, 0, 0);
+                DisplayUtils.setMargins(playerImpl.getTopControlsRoot(), 0, 0, 0, 0);
+                viewVideo.requestLayout();
+                showSystemUi();
+                isLand = false;
                 break;
         }
 
@@ -334,14 +377,16 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     //callback info video
     @Override
     public void onReceive(StreamInfo info) {
+        ArrayList<VideoStream> sortedStreamVideosList = Utils.getSortedStreamVideosList(this, info.video_streams,
+                info.video_only_streams, false);
+        int defaultResolutionIndex = Utils.getDefaultResolution(this, sortedStreamVideosList);
         Intent mIntent = new Intent()
                 .putExtra(BasePlayer.VIDEO_TITLE, info.title)
                 .putExtra(BasePlayer.VIDEO_URL, info.webpage_url)
                 .putExtra(BasePlayer.VIDEO_THUMBNAIL_URL, info.thumbnail_url)
                 .putExtra(BasePlayer.CHANNEL_NAME, info.uploader)
-                .putExtra(VideoPlayer.INDEX_QUALITY_VIDEO_STREAM, 0)
-                .putExtra(VideoPlayer.VIDEO_STREAMS_LIST,
-                        Utils.getSortedStreamVideosList(this, info.video_streams, info.video_only_streams, false))
+                .putExtra(VideoPlayer.INDEX_QUALITY_VIDEO_STREAM, defaultResolutionIndex)
+                .putExtra(VideoPlayer.VIDEO_STREAMS_LIST, sortedStreamVideosList)
                 .putExtra(VideoPlayer.VIDEO_ONLY_AUDIO_STREAM, Utils.getHighestQualityAudio(info.audio_streams));
         if (info.start_position > 0)
             mIntent.putExtra(BasePlayer.START_POSITION, info.start_position * 1000);
@@ -353,22 +398,27 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
 
     @Override
     public void onReCaptchaException() {
-
+        showSnackToast(recyclerView, R.string.recaptcha_request_toast);
+        // Starting ReCaptcha Challenge Activity
+        startActivityForResult(new Intent(this, ReCaptchaActivity.class), ReCaptchaActivity.RECAPTCHA_REQUEST);
     }
 
     @Override
     public void onBlockedByGemaError() {
-
+        setErrorImage(R.drawable.youtube_fail);
+        setErrorMessage(getString(R.string.blocked_by_gema), false);
     }
 
     @Override
     public void onContentErrorWithMessage(int messageId) {
-
+        setErrorImage(R.drawable.youtube_fail);
+        setErrorMessage(getString(messageId), false);
     }
 
     @Override
     public void onContentError() {
-
+        setErrorImage(R.drawable.youtube_fail);
+        setErrorMessage(getString(R.string.content_not_available), false);
     }
 
     @Override
@@ -377,6 +427,30 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     }
     //callback info video
 
+    private void setErrorImage(final int imageResource) {
+        if (detailImage == null) {
+            return;
+        }
+        detailImage.setImageDrawable(ContextCompat.getDrawable(this, imageResource));
+        animateView(detailImage, false, 0, 0, new Runnable() {
+            @Override
+            public void run() {
+                animateView(detailImage, true, 500);
+            }
+        });
+    }
+
+    @Override
+    protected void setErrorMessage(String message, boolean showRetryButton) {
+        super.setErrorMessage(message, showRetryButton);
+        currentStreamInfo = null;
+    }
+
+    @Override
+    protected void reloadContent() {
+        currentStreamInfo = null;
+        prepareAndLoad(0, videoUrl);
+    }
 
     /*//////////////////////////////////////////////////////////////////////////
     // Utils
@@ -458,11 +532,7 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
             this.playPauseButton = (AppCompatImageView) rootView.findViewById(R.id.detail_thumbnail_play_button);
 
             // Due to a bug on lower API, lets set the alpha instead of using a drawable
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                repeatButton.setImageAlpha(77);
-            else { //noinspection deprecation
-                repeatButton.setAlpha(77);
-            }
+            repeatButton.setImageAlpha(77);
 
             getRootView().setKeepScreenOn(true);
         }
@@ -499,26 +569,7 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
         public void onFullScreenButtonClicked() {
             if (DEBUG) Log.d(TAG, "onFullScreenButtonClicked() called");
             if (playerImpl.getPlayer() == null) return;
-
-            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && !PermissionHelper.checkSystemAlertWindowPermission(PlayerVideoActivity.this)) {
-                Toast.makeText(PlayerVideoActivity.this, R.string.msg_popup_permission, Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            context.startService(NavigationHelper.getOpenVideoPlayerIntent(context, PopupVideoPlayer.class, playerImpl));
-            if (playerImpl != null) playerImpl.destroyPlayer();
-
-            ((View) getControlAnimationView().getParent()).setVisibility(View.GONE);
-            PlayerVideoActivity.this.finish();*/
-            //recyclerView.setVisibility(View.GONE);
             toggleOrientation();
-            //hideSystemUi();
-            ((View) getControlAnimationView().getParent()).setVisibility(View.GONE);
-            viewVideo.getLayoutParams().height = FrameLayout.LayoutParams.MATCH_PARENT;
-            viewVideo.getLayoutParams().width = FrameLayout.LayoutParams.MATCH_PARENT;
-            viewVideo.requestLayout();
-
         }
 
         @Override
@@ -528,16 +579,10 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
             if (DEBUG) Log.d(TAG, "onRepeatClicked() called");
             switch (getCurrentRepeatMode()) {
                 case REPEAT_DISABLED:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                        repeatButton.setImageAlpha(77);
-                    else repeatButton.setAlpha(77);
-
+                    repeatButton.setImageAlpha(77);
                     break;
                 case REPEAT_ONE:
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                        repeatButton.setImageAlpha(255);
-                    else repeatButton.setAlpha(255);
-
+                    repeatButton.setImageAlpha(255);
                     break;
                 case REPEAT_ALL:
                     // Waiting :)
@@ -548,9 +593,13 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
         @Override
         public void onClick(View v) {
             super.onClick(v);
-            if (v.getId() == repeatButton.getId()) onRepeatClicked();
-            else if (v.getId() == playPauseButton.getId()) onVideoPlayPause();
-            else if (v.getId() == screenRotationButton.getId()) onScreenRotationClicked();
+            if (v.getId() == repeatButton.getId()) {
+                onRepeatClicked();
+            } else if (v.getId() == playPauseButton.getId()) {
+                onVideoPlayPause();
+            } else if (v.getId() == screenRotationButton.getId()) {
+                onScreenRotationClicked();
+            }
 
             if (getCurrentState() != STATE_COMPLETED) {
                 getControlsVisibilityHandler().removeCallbacksAndMessages(null);
@@ -680,7 +729,9 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
                     animateView(getControlsRoot(), false, duration, 0, new Runnable() {
                         @Override
                         public void run() {
-                            //hideSystemUi();
+                            if (isLand) {
+                                hideSystemUi();
+                            }
                         }
                     });
                 }
@@ -737,17 +788,18 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.d(TAG, "onSingleTapConfirmed() called with: e = [" + e + "]");
-            if (playerImpl.getCurrentState() != BasePlayer.STATE_PLAYING) return true;
+            if (playerImpl.getCurrentState() != BasePlayer.STATE_PLAYING) {
+                return true;
+            }
 
-            if (playerImpl.isControlsVisible()) playerImpl.hideControls(150, 0);
-            else {
+            if (playerImpl.isControlsVisible()) {
+                playerImpl.hideControls(150, 0);
+            } else {
                 playerImpl.showControlsThenHide();
                 showSystemUi();
             }
             return true;
         }
-
-        private final boolean isGestureControlsEnabled = true;
 
         private final float stepsBrightness = 15, stepBrightness = (1f / stepsBrightness), minBrightness = .01f;
         private float currentBrightness = .5f;

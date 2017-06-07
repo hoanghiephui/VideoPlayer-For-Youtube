@@ -38,6 +38,11 @@ public class SplashActivity extends BaseActivity {
     return 0;
   }
 
+  @Override
+  protected void reloadContent() {
+
+  }
+
   public void onOpenLogin(){
     if (PrefsUtils.getAccount(this) != null) {
       onOpenMain();

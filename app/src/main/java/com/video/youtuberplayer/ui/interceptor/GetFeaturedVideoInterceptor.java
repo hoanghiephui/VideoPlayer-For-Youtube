@@ -1,14 +1,10 @@
 package com.video.youtuberplayer.ui.interceptor;
 
 import com.google.api.services.youtube.model.VideoListResponse;
-import com.video.youtuberplayer.model.GetYouTubeVideos;
-import com.video.youtuberplayer.model.VideoCategory;
-import com.video.youtuberplayer.model.YouTubeVideo;
-import com.video.youtuberplayer.remote.mothods.VideoMethod;
+import com.video.youtuberplayer.remote.methods.VideoMethod;
 import com.video.youtuberplayer.ui.contracts.GetFeaturedVideoContract;
 
 import java.io.IOException;
-import java.util.List;
 
 import io.reactivex.Observable;
 
