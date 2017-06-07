@@ -223,7 +223,7 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     @Override
     public void onUpdateView(List<Video> videoList) {
         try {
-            presenter.getRelatedToVideoId(video.getId(), null, null);
+            presenter.getRelatedToVideoId(videoList.get(0).getId(), null, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
