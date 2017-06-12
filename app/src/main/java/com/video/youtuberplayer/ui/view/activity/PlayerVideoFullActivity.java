@@ -12,6 +12,7 @@ import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.StreamExtractorWorker;
+import com.video.youtuberplayer.model.VideoRealatedAndChanel;
 import com.video.youtuberplayer.ui.contracts.GetVideoDetailContract;
 
 import org.schabi.newpipe.extractor.stream_info.StreamInfo;
@@ -78,17 +79,7 @@ public class PlayerVideoFullActivity extends BaseActivity implements GetVideoDet
     }
 
     @Override
-    public void onUpdateView(List<Video> videoList) {
-
-    }
-
-    @Override
-    public void onUpdateViewRelated(List<SearchResult> resultList) {
-
-    }
-
-    @Override
-    public void onUpdateChannel(ChannelListResponse channelListResponse) {
+    public void onUpdateViewRelatedAndChannel(VideoRealatedAndChanel videoRealatedAndChanel) {
 
     }
 

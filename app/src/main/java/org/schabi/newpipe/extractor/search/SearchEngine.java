@@ -2,6 +2,7 @@ package org.schabi.newpipe.extractor.search;
 
 import org.schabi.newpipe.extractor.UrlIdHandler;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.stream_info.StreamInfoItemCollector;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -42,7 +43,7 @@ public abstract class SearchEngine {
         collector = new InfoItemSearchCollector(urlIdHandler, serviceId);
     }
 
-    protected InfoItemSearchCollector getInfoItemSearchCollector() {
+    protected  InfoItemSearchCollector getInfoItemSearchCollector() {
         return collector;
     }
     //Result search(String query, int page);

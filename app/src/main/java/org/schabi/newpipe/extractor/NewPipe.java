@@ -1,6 +1,7 @@
 package org.schabi.newpipe.extractor;
 
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.services.youtube.YoutubeService;
 
 /**
  * Created by Christian Schabesberger on 23.08.15.

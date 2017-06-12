@@ -1,6 +1,7 @@
 package org.schabi.newpipe.extractor.playlist;
 
 import org.schabi.newpipe.extractor.InfoItemCollector;
+import org.schabi.newpipe.extractor.channel.ChannelInfoItemExtractor;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 
 public class PlayListInfoItemCollector extends InfoItemCollector {

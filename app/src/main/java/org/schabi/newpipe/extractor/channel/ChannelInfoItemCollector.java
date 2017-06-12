@@ -1,7 +1,11 @@
 package org.schabi.newpipe.extractor.channel;
 
 import org.schabi.newpipe.extractor.InfoItemCollector;
+import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.exceptions.FoundAdException;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
+import org.schabi.newpipe.extractor.stream_info.StreamInfoItem;
+import org.schabi.newpipe.extractor.stream_info.StreamInfoItemExtractor;
 
 /**
  * Created by Christian Schabesberger on 12.02.17.

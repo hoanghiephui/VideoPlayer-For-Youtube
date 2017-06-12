@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
+import com.video.youtuberplayer.model.VideoRealatedAndChanel;
 import com.video.youtuberplayer.ui.contracts.GetVideoDetailContract;
 
 import java.io.IOException;
@@ -30,43 +31,27 @@ public class GetVideoDetailPresenter extends BasePresenter<GetVideoDetailContrac
     }
 
     @Override
-    public void getVideoDetail(String token, String id) throws IOException {
-        mInterceptor.getVideoDetail(token, id)
-                .subscribeOn(Schedulers.newThread())
+    public void getRelatedAndChannel(String idVideo, String idChannel, String token, String tokenPage) throws IOException {
+        mInterceptor.getRelatedAndChannel(idVideo, idChannel, token, tokenPage)
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onGetVideoDetail());
+                .subscribe(onRelatedAndChanel());
     }
 
-    @Override
-    public void getRelatedToVideoId(String id, String token, String tokenPage) throws IOException {
-        mInterceptor.getRelatedToVideoId(id, token, tokenPage)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onRelatedToVideoId());
-    }
-
-    @Override
-    public void getChannel(String id) throws IOException {
-        mInterceptor.geChannel(id)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onChannel());
-    }
-
-    private Observer<? super ChannelListResponse> onChannel() {
-        return new Observer<ChannelListResponse>() {
+    private Observer<VideoRealatedAndChanel> onRelatedAndChanel() {
+        return new Observer<VideoRealatedAndChanel>() {
             @Override
-            public void onSubscribe(@NonNull Disposable d) {
+            public void onSubscribe(Disposable d) {
                 mSubscribers.add(d);
             }
 
             @Override
-            public void onNext(@NonNull ChannelListResponse channelListResponse) {
-                mView.onUpdateChannel(channelListResponse);
+            public void onNext(VideoRealatedAndChanel videoRealatedAndChanel) {
+                mView.onUpdateViewRelatedAndChannel(videoRealatedAndChanel);
             }
 
             @Override
-            public void onError(@NonNull Throwable e) {
+            public void onError(Throwable e) {
                 e.printStackTrace();
             }
 
@@ -77,51 +62,4 @@ public class GetVideoDetailPresenter extends BasePresenter<GetVideoDetailContrac
         };
     }
 
-    private Observer<? super List<SearchResult>> onRelatedToVideoId() {
-        return new Observer<List<SearchResult>>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-                mSubscribers.add(d);
-            }
-
-            @Override
-            public void onNext(@NonNull List<SearchResult> resultList) {
-                mView.onUpdateViewRelated(resultList);
-            }
-
-            @Override
-            public void onError(@NonNull Throwable e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        };
-    }
-
-    private Observer<List<Video>> onGetVideoDetail() {
-        return new Observer<List<Video>>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-                mSubscribers.add(d);
-            }
-
-            @Override
-            public void onNext(@NonNull List<Video> videoList) {
-                mView.onUpdateView(videoList);
-            }
-
-            @Override
-            public void onError(@NonNull Throwable e) {
-                Log.d(TAG, "onError: " + e.getMessage());
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        };
-    }
 }

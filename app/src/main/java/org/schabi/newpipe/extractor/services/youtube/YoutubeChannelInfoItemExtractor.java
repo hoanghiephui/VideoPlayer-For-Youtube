@@ -1,8 +1,9 @@
 package org.schabi.newpipe.extractor.services.youtube;
 
-import org.jsoup.nodes.Element;
+import org.schabi.newpipe.extractor.Parser;
 import org.schabi.newpipe.extractor.channel.ChannelInfoItemExtractor;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
+import org.jsoup.nodes.Element;
 
 /**
  * Created by Christian Schabesberger on 12.02.17.

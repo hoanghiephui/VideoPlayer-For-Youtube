@@ -30,7 +30,7 @@ public interface StreamInfoItemExtractor {
     int getDuration() throws ParsingException;
     String getUploader() throws ParsingException;
     String getUploadDate() throws ParsingException;
-    long getViewCount() throws ParsingException;
-    String getThumbnailUrl() throws ParsingException;
+    long getViewCount() throws  ParsingException;
+    String getThumbnailUrl() throws  ParsingException;
     boolean isAd() throws ParsingException;
 }

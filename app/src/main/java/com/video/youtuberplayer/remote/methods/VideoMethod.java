@@ -10,6 +10,7 @@ import com.video.youtuberplayer.api.GetFeaturedVideos;
 import com.video.youtuberplayer.api.GetGuideCategories;
 import com.video.youtuberplayer.api.GetRelatedVideos;
 import com.video.youtuberplayer.api.GetVideoDetail;
+import com.video.youtuberplayer.model.VideoRealatedAndChanel;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,6 +19,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function3;
 
 /**
  * Created by hoanghiep on 5/5/17.
@@ -74,6 +76,20 @@ public class VideoMethod {
                 e.onComplete();
             }
         });
+    }
+
+    public Observable<VideoRealatedAndChanel> getRealatedAndChanel(final String idVideo, String idChannel,
+                                                                   final String token, final String tokenPage)
+            throws IOException {
+        return Observable.zip(getVideoDetail(null, idVideo), getRelatedVideos(idVideo, token, tokenPage),
+                getChannelYoutube(idChannel), new Function3<List<Video>, List<SearchResult>, ChannelListResponse,
+                        VideoRealatedAndChanel>() {
+                    @Override
+                    public VideoRealatedAndChanel apply(List<Video> videos, List<SearchResult> searchResults,
+                                                        ChannelListResponse channelListResponse) throws Exception {
+                        return new VideoRealatedAndChanel(videos, searchResults, channelListResponse);
+                    }
+                });
     }
   /*try {
     YouTube.Activities.List videosList = YouTubeAPI.create()

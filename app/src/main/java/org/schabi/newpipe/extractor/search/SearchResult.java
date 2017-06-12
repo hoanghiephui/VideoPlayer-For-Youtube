@@ -2,6 +2,7 @@ package org.schabi.newpipe.extractor.search;
 
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.stream_info.StreamInfoItem;
 
 import java.io.IOException;
 import java.util.EnumSet;

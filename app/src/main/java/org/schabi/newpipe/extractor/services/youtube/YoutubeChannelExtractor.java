@@ -1,6 +1,7 @@
 package org.schabi.newpipe.extractor.services.youtube;
 
 
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -16,6 +17,7 @@ import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.stream_info.StreamInfoItemCollector;
 import org.schabi.newpipe.extractor.stream_info.StreamInfoItemExtractor;
+
 
 import java.io.IOException;
 
@@ -169,11 +171,7 @@ public class YoutubeChannelExtractor extends ChannelExtractor {
 
                     @Override
                     public boolean isAd() throws ParsingException {
-                        if(!li.select("span[class*=\"icon-not-available\"]").isEmpty()) {
-                            return true;
-                        } else {
-                            return false;
-                        }
+                        return !li.select("span[class*=\"icon-not-available\"]").isEmpty();
                     }
 
                     @Override

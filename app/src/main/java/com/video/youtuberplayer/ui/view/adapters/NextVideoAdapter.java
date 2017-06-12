@@ -42,9 +42,10 @@ class NextVideoAdapter extends RecyclerView.Adapter<NextVideoAdapter.NextVideoVi
     }
 
     @Override
-    public void onBindViewHolder(NextVideoViewHolder holder, int position) {
+    public void onBindViewHolder(final NextVideoViewHolder holder, int position) {
         final SearchResult video = videoList.get(position);
         holder.itemVideoTitleView.setText(video.getSnippet().getTitle());
+        holder.itemUploaderView.setText(video.getSnippet().getChannelTitle());
         Glide.with(holder.itemView.getContext())
                 .load(video.getSnippet().getThumbnails().getHigh().getUrl())
                 .into(holder.itemThumbnailView);
@@ -52,7 +53,7 @@ class NextVideoAdapter extends RecyclerView.Adapter<NextVideoAdapter.NextVideoVi
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onListenAdapter.onClickVideoContent(video);
+                onListenAdapter.onClickVideoContent(video, holder.getAdapterPosition());
             }
         });
     }

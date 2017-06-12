@@ -41,7 +41,7 @@ public class DashMpdParser {
     private DashMpdParser() {
     }
 
-    private static class DashMpdParsingException extends ParsingException {
+    static class DashMpdParsingException extends ParsingException {
         DashMpdParsingException(String message, Exception e) {
             super(message, e);
         }

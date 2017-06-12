@@ -29,7 +29,7 @@ public class GetGuideCategoriesPresenter extends BasePresenter<GuideCategoriesCo
   @Override
   public void getGuideCategories(String regionCode, String hl, String token) throws IOException {
     mInterceptor.getGuideCategories(regionCode, hl, token)
-            .subscribeOn(Schedulers.io())
+            .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(onGetGuideCategorie());
   }

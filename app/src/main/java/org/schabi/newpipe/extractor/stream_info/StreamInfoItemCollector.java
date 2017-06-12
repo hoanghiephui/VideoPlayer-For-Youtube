@@ -6,6 +6,9 @@ import org.schabi.newpipe.extractor.UrlIdHandler;
 import org.schabi.newpipe.extractor.exceptions.FoundAdException;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 
+import java.util.List;
+import java.util.Vector;
+
 /**
  * Created by Christian Schabesberger on 28.02.16.
  *

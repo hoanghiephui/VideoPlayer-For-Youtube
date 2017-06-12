@@ -6,6 +6,7 @@ import org.schabi.newpipe.extractor.channel.ChannelInfoItemCollector;
 import org.schabi.newpipe.extractor.channel.ChannelInfoItemExtractor;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.exceptions.FoundAdException;
+import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.stream_info.StreamInfoItemCollector;
 import org.schabi.newpipe.extractor.stream_info.StreamInfoItemExtractor;
 

@@ -288,7 +288,7 @@ public class VideoPlayerMoreAdapter extends RecyclerView.Adapter<VideoPlayerMore
     public interface OnListenAdapter {
         void onShowPopup();
 
-        void onClickVideoContent(SearchResult searchResult);
+        void onClickVideoContent(SearchResult searchResult, int position);
     }
 
     abstract class ViewHolder extends RecyclerView.ViewHolder {

@@ -10,8 +10,8 @@ import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.search.InfoItemSearchCollector;
 import org.schabi.newpipe.extractor.search.SearchEngine;
 
-import java.io.IOException;
 import java.net.URLEncoder;
+import java.io.IOException;
 import java.util.EnumSet;
 
 

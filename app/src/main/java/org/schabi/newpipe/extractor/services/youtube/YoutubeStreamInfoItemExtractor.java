@@ -117,10 +117,7 @@ public class YoutubeStreamInfoItemExtractor implements StreamInfoItemExtractor {
             }
         }
 
-        output = Parser.matchGroup1("([0-9,\\. ]*)", input)
-                .replace(" ", "")
-                .replace(".", "")
-                .replace(",", "");
+        output = input.replaceAll("[^0-9]+", "");
 
         try {
             return Long.parseLong(output);
@@ -164,11 +161,7 @@ public class YoutubeStreamInfoItemExtractor implements StreamInfoItemExtractor {
 
     @Override
     public boolean isAd() throws ParsingException {
-        if(!item.select("span[class*=\"icon-not-available\"]").isEmpty()) {
-            return true;
-        } else {
-            return false;
-        }
+        return !item.select("span[class*=\"icon-not-available\"]").isEmpty();
     }
 
     private boolean isLiveStream(Element item) {

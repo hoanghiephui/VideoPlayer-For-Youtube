@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -30,11 +31,11 @@ import com.github.rubensousa.bottomsheetbuilder.BottomSheetBuilder;
 import com.github.rubensousa.bottomsheetbuilder.BottomSheetMenuDialog;
 import com.github.rubensousa.bottomsheetbuilder.adapter.BottomSheetItemClickListener;
 import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.StreamExtractorWorker;
+import com.video.youtuberplayer.model.VideoRealatedAndChanel;
 import com.video.youtuberplayer.model.VideoDuration;
 import com.video.youtuberplayer.model.YouTubeVideo;
 import com.video.youtuberplayer.ui.contracts.GetVideoDetailContract;
@@ -61,8 +62,6 @@ import butterknife.BindView;
 import io.reactivex.disposables.CompositeDisposable;
 
 import static com.video.youtuberplayer.utils.AnimationUtils.animateView;
-import static com.video.youtuberplayer.utils.DisplayUtils.convertDpToPixel;
-import static com.video.youtuberplayer.utils.DisplayUtils.convertPixelsToDp;
 import static com.video.youtuberplayer.utils.Utils.getOpenVideoPlayerIntent;
 import static com.video.youtuberplayer.utils.ViewUtils.onShowImage;
 import static com.video.youtuberplayer.utils.ViewUtils.showSnackToast;
@@ -92,8 +91,11 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     RelativeLayout detailThumb;
     @BindView(R.id.viewTitle)
     View viewTitle;
+    @BindView(R.id.progressBarLoadingPanel)
+    ProgressBar progressBar;
 
     private boolean isLand = false;
+    private boolean isClick = false;
 
     private VideoPlayerMoreAdapter adapter;
     private List<Video> videoList = new ArrayList<>();
@@ -138,7 +140,8 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
         playerImpl.setup(findViewById(android.R.id.content), this);
         if (video != null) {
             try {
-                presenter.getVideoDetail(null, video.getId());
+                presenter.getRelatedAndChannel(video.getId(), video.getChannelId(),
+                        null, null);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -156,7 +159,7 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
             onShowImage(thumbnailVideo, video.getThumbnailUrl());
             onShowImage(detailImage, video.getThumbnailUrl());
             if (currentStreamInfo == null) {
-                selectAndLoadVideo(0, videoUrl, videoTitle);
+                selectAndLoadVideo(videoUrl, videoTitle);
             }
         } else {
             detailImage.setVisibility(View.GONE);
@@ -164,8 +167,8 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
             viewVideo.getLayoutParams().height = FrameLayout.LayoutParams.MATCH_PARENT;
             viewVideo.getLayoutParams().width = FrameLayout.LayoutParams.MATCH_PARENT;
             int naviga = DisplayUtils.getNavigation(this);
-            DisplayUtils.setMargins(playerImpl.getBottomControlsRoot(), 0, 0, naviga != 0 ? naviga : 0, 0);
-            DisplayUtils.setMargins(playerImpl.getTopControlsRoot(), 0, 0, naviga != 0 ? naviga : 0, 0);
+            DisplayUtils.setMargins(playerImpl.getBottomControlsRoot(), 0, 0, naviga, 0);
+            DisplayUtils.setMargins(playerImpl.getTopControlsRoot(), 0, 0, naviga, 0);
             viewVideo.requestLayout();
             toggleOrientation();
         }
@@ -241,29 +244,19 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     }
 
     @Override
-    public void onUpdateView(List<Video> videoList) {
-        try {
-            presenter.getRelatedToVideoId(videoList.get(0).getId(), null, null);
-            presenter.getChannel(videoList.get(0).getSnippet().getChannelId());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void onUpdateViewRelatedAndChannel(VideoRealatedAndChanel videoRealatedAndChanel) {
         this.videoList.clear();
-        this.videoList.addAll(videoList);
+        this.videoList.addAll(videoRealatedAndChanel.getVideoList());
         adapter.setList(this.videoList);
-    }
 
-    @Override
-    public void onUpdateViewRelated(List<SearchResult> resultList) {
-        Log.d(TAG, "onUpdateViewRelated: " + resultList.get(0).getEtag());
-        adapter.setResultList(resultList);
-    }
+        adapter.setResultList(videoRealatedAndChanel.getResultList());
 
-    @Override
-    public void onUpdateChannel(ChannelListResponse channelListResponse) {
-        Log.d(TAG, "onUpdateChannel: " + channelListResponse.getItems().get(0).getSnippet().getTitle());
-        String thumb = ViewUtils.thumbnailNormalUrl(channelListResponse.getItems().get(0));
+        String thumb = ViewUtils.thumbnailNormalUrl(videoRealatedAndChanel.getChannelListResponse().getItems().get(0));
         adapter.setUrlImageChannel(thumb);
+        if (isClick && this.videoList.size() > 0) {
+            isClick = false;
+            recyclerView.scrollToPosition(0);
+        }
     }
 
 
@@ -331,8 +324,8 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
                 viewVideo.getLayoutParams().height = FrameLayout.LayoutParams.MATCH_PARENT;
                 viewVideo.getLayoutParams().width = FrameLayout.LayoutParams.MATCH_PARENT;
                 int naviga = DisplayUtils.getNavigation(this);
-                DisplayUtils.setMargins(playerImpl.getBottomControlsRoot(), 0, 0, naviga != 0 ? naviga : 0, 0);
-                DisplayUtils.setMargins(playerImpl.getTopControlsRoot(), 0, 0, naviga != 0 ? naviga : 0, 0);
+                DisplayUtils.setMargins(playerImpl.getBottomControlsRoot(), 0, 0, naviga, 0);
+                DisplayUtils.setMargins(playerImpl.getTopControlsRoot(), 0, 0, naviga, 0);
                 viewVideo.requestLayout();
                 isLand = true;
                 break;
@@ -350,28 +343,28 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
 
     }
 
-    public void selectAndLoadVideo(int serviceId, String videoUrl, String videoTitle) {
-        selectAndLoadVideo(serviceId, videoUrl, videoTitle, true);
+    public void selectAndLoadVideo(String videoUrl, String videoTitle) {
+        selectAndLoadVideo(videoUrl, videoTitle, true);
     }
 
-    public void selectAndLoadVideo(int serviceId, String videoUrl, String videoTitle, boolean scrollToTop) {
-        selectVideo(serviceId, videoUrl, videoTitle);
-        prepareAndLoad(serviceId, videoUrl);
+    public void selectAndLoadVideo(String videoUrl, String videoTitle, boolean scrollToTop) {
+        selectVideo(videoUrl, videoTitle);
+        prepareAndLoad(videoUrl);
     }
 
-    private void prepareAndLoad(int serviceId, String videoUrl) {
+    private void prepareAndLoad(String videoUrl) {
         isLoading.set(true);
         if (curExtractorWorker != null && curExtractorWorker.isRunning()) {
             curExtractorWorker.cancel();
         }
-        curExtractorWorker = new StreamExtractorWorker(this, serviceId, videoUrl, this);
+        curExtractorWorker = new StreamExtractorWorker(this, 0, videoUrl, this);
         curExtractorWorker.start();
     }
 
-    public void selectVideo(int serviceId, String videoUrl, String videoTitle) {
+    public void selectVideo(String videoUrl, String videoTitle) {
         this.videoUrl = videoUrl;
         this.videoTitle = videoTitle;
-        this.serviceId = serviceId;
+        this.serviceId = 0;
     }
 
     //callback info video
@@ -418,7 +411,8 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     @Override
     public void onContentError() {
         setErrorImage(R.drawable.youtube_fail);
-        setErrorMessage(getString(R.string.content_not_available), false);
+        //setErrorMessage(getString(R.string.content_not_available), false);
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -449,7 +443,7 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     @Override
     protected void reloadContent() {
         currentStreamInfo = null;
-        prepareAndLoad(0, videoUrl);
+        prepareAndLoad(videoUrl);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -493,13 +487,16 @@ public class PlayerVideoActivity extends BaseActivity implements GetVideoDetailC
     }
 
     @Override
-    public void onClickVideoContent(SearchResult searchResult) {
+    public void onClickVideoContent(SearchResult searchResult, int position) {
+        isClick = true;
+        progressBar.setVisibility(View.VISIBLE);
         try {
-            presenter.getVideoDetail(null, searchResult.getId().getVideoId());
+            presenter.getRelatedAndChannel(searchResult.getId().getVideoId(), searchResult.getSnippet().getChannelId(),
+                    null, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        selectAndLoadVideo(0, "https://youtu.be/" + searchResult.getId().getVideoId(), searchResult.getSnippet().getTitle());
+        selectAndLoadVideo("https://youtu.be/" + searchResult.getId().getVideoId(), searchResult.getSnippet().getTitle());
     }
 
 
