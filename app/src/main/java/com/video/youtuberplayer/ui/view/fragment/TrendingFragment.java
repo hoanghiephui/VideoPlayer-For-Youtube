@@ -7,11 +7,11 @@ import android.util.Log;
 import android.view.View;
 
 import com.video.youtuberplayer.R;
-import com.video.youtuberplayer.model.VideoCategory;
+import com.video.youtuberplayer.model.VideoListHome;
 import com.video.youtuberplayer.model.YouTubeVideo;
 import com.video.youtuberplayer.ui.contracts.GetFeaturedVideoContract;
 import com.video.youtuberplayer.ui.interceptor.GetFeaturedVideoInterceptor;
-import com.video.youtuberplayer.ui.presenter.GetFraturedViewPresenter;
+import com.video.youtuberplayer.ui.presenter.GetTrendingAndPopularPresenter;
 import com.video.youtuberplayer.ui.view.adapters.VideoAdapter;
 
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class TrendingFragment extends BaseFragment implements GetFeaturedVideoCo
   @Override
   protected void onInitContent(Bundle savedInstanceState) {
     interceptor = new GetFeaturedVideoInterceptor();
-    presenter = new GetFraturedViewPresenter(interceptor, new CompositeDisposable());
+    presenter = new GetTrendingAndPopularPresenter(interceptor, new CompositeDisposable());
 
     presenter.onBindView(this);
     if (getArguments() != null) {
@@ -116,10 +116,7 @@ public class TrendingFragment extends BaseFragment implements GetFeaturedVideoCo
 
   }
 
-  @Override
-  public void setListVideo(List<YouTubeVideo> listVideo, boolean hasMorePages) {
 
-  }
 
   @Override
   public void setupRecyclerView() {
@@ -138,6 +135,11 @@ public class TrendingFragment extends BaseFragment implements GetFeaturedVideoCo
 
   @Override
   public void setTokenNextPage(String tokenNextPage) {
+
+  }
+
+  @Override
+  public void onUpdateViewHome(VideoListHome videoListHome) {
 
   }
 }

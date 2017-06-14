@@ -3,6 +3,7 @@ package com.video.youtuberplayer.ui.view.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatImageView;
@@ -14,13 +15,17 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.SearchResult;
+import com.google.api.services.youtube.model.VideoListResponse;
 import com.pnikosis.materialishprogress.ProgressWheel;
 import com.video.youtuberplayer.R;
-import com.video.youtuberplayer.model.VideoCategory;
+import com.video.youtuberplayer.api.GetVideosDetailsByIDs;
+import com.video.youtuberplayer.model.VideoListHome;
 import com.video.youtuberplayer.model.YouTubeVideo;
 import com.video.youtuberplayer.ui.contracts.GetFeaturedVideoContract;
 import com.video.youtuberplayer.ui.interceptor.GetFeaturedVideoInterceptor;
-import com.video.youtuberplayer.ui.presenter.GetFraturedViewPresenter;
+import com.video.youtuberplayer.ui.presenter.GetTrendingAndPopularPresenter;
 import com.video.youtuberplayer.ui.view.activity.BaseActivity;
 import com.video.youtuberplayer.ui.view.activity.PlayerVideoActivity;
 import com.video.youtuberplayer.ui.view.adapters.VideoAdapter;
@@ -51,6 +56,15 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
   private static final String ARG_FRAGMENT_LAYOUT_ID = "ListVideoDefaultFragment.ARG_FRAGMENT_LAYOUT_ID";
   private static final String ARG_TOKEN = "ListVideoDefaultFragment.ARG_TOKEN";
   private static final String ARG_MAX_RESULT = "ListVideoDefaultFragment.ARG_MAX_RESULT";
+  private static final String ARG_STATUS = "status";
+  public static final int GET_TRENDING = 0;
+  public static final int GET_POPULAR = 1;
+
+  @StateRule
+  private int state;
+  @IntDef({GET_TRENDING, GET_POPULAR})
+  private @interface StateRule {
+  }
 
   @BindView(R.id.list_movies_recycler_view)
   RecyclerView mMoviesRecyclerView;
@@ -109,12 +123,13 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
     return bundle;
   }
 
-  public static ListVideoDefaultFragment newInstance(long maxResult, String token, int layoutID, int fragmentLayoutID, Bundle arguments) {
+  public static ListVideoDefaultFragment newInstance(long maxResult, String token, int layoutID,
+                                                     int fragmentLayoutID, Bundle arguments, int state) {
     arguments.putInt(ARG_LAYOUT_ID, layoutID);
     arguments.putInt(ARG_FRAGMENT_LAYOUT_ID, fragmentLayoutID);
     arguments.putLong(ARG_MAX_RESULT, maxResult);
     arguments.putString(ARG_TOKEN, token);
-
+    arguments.putInt(ARG_STATUS, state);
     ListVideoDefaultFragment fragment = new ListVideoDefaultFragment();
     fragment.setArguments(arguments);
     return fragment;
@@ -133,6 +148,7 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
     mLayoutID = getArguments().getInt(ARG_LAYOUT_ID, R.layout.item_video_home);
     maxResult = getArguments().getLong(ARG_MAX_RESULT);
     token = getArguments().getString(ARG_TOKEN);
+    state = getArguments().getInt(ARG_STATUS);
   }
 
   @Override
@@ -153,7 +169,7 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
   @Override
   protected void onInitContent(Bundle savedInstanceState) {
     interceptor = new GetFeaturedVideoInterceptor();
-    presenter = new GetFraturedViewPresenter(interceptor, new CompositeDisposable());
+    presenter = new GetTrendingAndPopularPresenter(interceptor, new CompositeDisposable());
     presenter.onBindView(this);
     setupLayoutManager();
     mMoviesRecyclerView.addOnScrollListener(createOnScrollListener());
@@ -176,7 +192,14 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
       mSwipeRefreshLayout.setRefreshing(false);
     }
     try {
-      presenter.getFeaturedVideo(maxResult, token, tokenNextPage);
+      switch (state) {
+        case GET_TRENDING:
+          presenter.getListVideoHome(maxResult, token, tokenNextPage);
+          break;
+        case GET_POPULAR:
+          presenter.getFeaturedVideo(maxResult, token, tokenNextPage);
+      }
+
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -197,11 +220,7 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
 
   }
 
-  @Override
-  public void setListVideo(List<YouTubeVideo> listVideo, boolean hasMorePages) {
-    mlistVideo = listVideo;
-    this.hasMorePages = hasMorePages;
-  }
+
 
   @Override
   public void setupRecyclerView() {
@@ -241,6 +260,38 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
   @Override
   public void setTokenNextPage(String tokenNextPage) {
     this.tokenNextPage = tokenNextPage;
+  }
+
+  @Override
+  public void onUpdateViewHome(VideoListHome videoListHome) {
+    VideoListResponse videos = videoListHome.getVideoListResponse();
+    SearchListResponse listResponse = videoListHome.getListResponse();
+    if (videos != null) {
+      addAllVideo(presenter.toYouTubeVideoList(videos.getItems()));
+      onUpdateView();
+      if (videos.getNextPageToken()!= null) {
+        setTokenNextPage(videos.getNextPageToken());
+      }
+      setRecyclerViewVisibility(View.VISIBLE);
+      setProgressVisibility(View.GONE);
+
+    } else if (listResponse != null){
+      /*try {
+        presenter.getFeaturedVideo(maxResult, token, tokenNextPage);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      addAllVideo(presenter.toYouTubeVideoList(listResponse.getItems()));
+      onUpdateView();
+      if (listResponse.getNextPageToken()!= null) {
+        setTokenNextPage(listResponse.getNextPageToken());
+      }
+      setRecyclerViewVisibility(View.VISIBLE);
+      setProgressVisibility(View.GONE);*/
+
+    } else {
+      onErrorInServer();
+    }
   }
 
   private void setupAdapter() {
@@ -316,5 +367,20 @@ public class ListVideoDefaultFragment extends BaseFragment implements GetFeature
       presenter.onUnbindView();
     }
     super.onDestroyView();
+  }
+
+  private List<YouTubeVideo> getVideosList(List<SearchResult> searchResultList) throws IOException {
+    StringBuilder videoIds = new StringBuilder();
+
+    // append the video IDs into a strings (CSV)
+    for (SearchResult res : searchResultList) {
+      videoIds.append(res.getId().getVideoId());
+      videoIds.append(',');
+    }
+
+    // get video details by supplying the videos IDs
+    GetVideosDetailsByIDs getVideo = new GetVideosDetailsByIDs(maxResult, token, tokenNextPage, videoIds.toString());
+
+    return getVideo.getNextVideos();
   }
 }

@@ -27,6 +27,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.disposables.CompositeDisposable;
 
+import static com.video.youtuberplayer.ui.view.fragment.ListVideoDefaultFragment.GET_POPULAR;
+import static com.video.youtuberplayer.ui.view.fragment.ListVideoDefaultFragment.GET_TRENDING;
 import static com.video.youtuberplayer.utils.LocaleUtils.getLocaleCountryISO;
 import static com.video.youtuberplayer.utils.LocaleUtils.getLocaleLanguageAndCountry;
 
@@ -52,9 +54,17 @@ public class MainFragment extends BaseFragment implements GuideCategoriesContrac
 
   @Override
   protected void onInitContent(Bundle savedInstanceState) {
-    startFragment(R.id.container_recently, ListVideoDefaultFragment.newInstance(10L, null, R.layout.item_video_home,
+    startFragment(R.id.container_trending,
+            ListVideoDefaultFragment.newInstance(10L, null, R.layout.item_video_home,
             R.layout.fragment_trending,
-            ListVideoDefaultFragment.createLinearListArguments(RecyclerView.HORIZONTAL, false)));
+            ListVideoDefaultFragment.createLinearListArguments(RecyclerView.HORIZONTAL, false)
+                    ,GET_POPULAR));
+
+    startFragment(R.id.container_recently,
+            ListVideoDefaultFragment.newInstance(10L, null, R.layout.item_video_home,
+                    R.layout.fragment_trending,
+                    ListVideoDefaultFragment.createLinearListArguments(RecyclerView.HORIZONTAL, false)
+                    ,GET_POPULAR));
 
     GuideCategoriesContract.IGuideCategoriesInterceptor interceptor = new GetGuideCategoriesInterceptor();
     presenter = new GetGuideCategoriesPresenter(interceptor, new CompositeDisposable());

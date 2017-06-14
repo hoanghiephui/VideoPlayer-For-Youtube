@@ -10,6 +10,8 @@ import com.video.youtuberplayer.R;
 import com.video.youtuberplayer.model.ListActivityDTO;
 import com.video.youtuberplayer.ui.view.fragment.ListVideoDefaultFragment;
 
+import static com.video.youtuberplayer.ui.view.fragment.ListVideoDefaultFragment.GET_POPULAR;
+
 /**
  * Created by hoanghiep on 5/7/17.
  */
@@ -66,7 +68,7 @@ public class ListDefaultActivity extends BaseActivity {
     switch (mListActivityDTO.getListType()) {
       case VIDEO:
         fragment = ListVideoDefaultFragment.newInstance(25L, null, R.layout.item_list_video, R.layout.fragment_list_video_default,
-                ListVideoDefaultFragment.createLinearListArguments(RecyclerView.VERTICAL, false));
+                ListVideoDefaultFragment.createLinearListArguments(RecyclerView.VERTICAL, false), GET_POPULAR);
         break;
     }
     startFragment(R.id.content_fragment, fragment);

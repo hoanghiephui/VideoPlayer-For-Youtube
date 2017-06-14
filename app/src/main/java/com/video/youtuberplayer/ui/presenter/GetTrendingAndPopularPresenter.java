@@ -6,6 +6,7 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.video.youtuberplayer.model.GetYouTubeVideos;
 import com.video.youtuberplayer.model.VideoCategory;
+import com.video.youtuberplayer.model.VideoListHome;
 import com.video.youtuberplayer.model.YouTubeVideo;
 import com.video.youtuberplayer.ui.contracts.GetFeaturedVideoContract;
 
@@ -26,9 +27,9 @@ import io.reactivex.schedulers.Schedulers;
  * Created by hoanghiep on 5/5/17.
  */
 
-public class GetFraturedViewPresenter extends BasePresenter<GetFeaturedVideoContract.IGeFeaturedVideoView, GetFeaturedVideoContract.IGetFeaturedVideoInterceptor>
+public class GetTrendingAndPopularPresenter extends BasePresenter<GetFeaturedVideoContract.IGeFeaturedVideoView, GetFeaturedVideoContract.IGetFeaturedVideoInterceptor>
         implements GetFeaturedVideoContract.IGetFeaturedVideoPresenter {
-  public GetFraturedViewPresenter(GetFeaturedVideoContract.IGetFeaturedVideoInterceptor interceptor, CompositeDisposable compositeDisposable) {
+  public GetTrendingAndPopularPresenter(GetFeaturedVideoContract.IGetFeaturedVideoInterceptor interceptor, CompositeDisposable compositeDisposable) {
     super(interceptor, compositeDisposable);
   }
 
@@ -44,6 +45,44 @@ public class GetFraturedViewPresenter extends BasePresenter<GetFeaturedVideoCont
       noConnectionError();
     }
 
+  }
+
+  @Override
+  public void getListVideoHome(long maxResults, String token, String tokenNextPage) throws IOException {
+    mView.setProgressVisibility(View.VISIBLE);
+    if (mView.isInternetConnected()) {
+      mInterceptor.getListVideoHome(maxResults, token, tokenNextPage)
+              .subscribeOn(Schedulers.computation())
+              .observeOn(AndroidSchedulers.mainThread())
+              .subscribe(onGetListVideoHome());
+    } else {
+      noConnectionError();
+    }
+  }
+
+  private Observer<VideoListHome> onGetListVideoHome() {
+    return new Observer<VideoListHome>() {
+      @Override
+      public void onSubscribe(Disposable d) {
+        mSubscribers.add(d);
+      }
+
+      @Override
+      public void onNext(VideoListHome videoListHome) {
+        mView.onUpdateViewHome(videoListHome);
+
+      }
+
+      @Override
+      public void onError(Throwable e) {
+        e.printStackTrace();
+      }
+
+      @Override
+      public void onComplete() {
+
+      }
+    };
   }
 
   private Observer<VideoListResponse> onGetFeatured() {
@@ -82,7 +121,7 @@ public class GetFraturedViewPresenter extends BasePresenter<GetFeaturedVideoCont
     };
   }
 
-  protected List<YouTubeVideo> toYouTubeVideoList(List<Video> videoList) {
+  public List<YouTubeVideo> toYouTubeVideoList(List<Video> videoList) {
     List<YouTubeVideo> youTubeVideoList = new ArrayList<>();
 
     if (videoList != null) {

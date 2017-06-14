@@ -2,14 +2,17 @@ package com.video.youtuberplayer.remote.methods;
 
 import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.GuideCategory;
+import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.video.youtuberplayer.api.GetChannel;
 import com.video.youtuberplayer.api.GetFeaturedVideos;
 import com.video.youtuberplayer.api.GetGuideCategories;
+import com.video.youtuberplayer.api.GetPopularVideos;
 import com.video.youtuberplayer.api.GetRelatedVideos;
 import com.video.youtuberplayer.api.GetVideoDetail;
+import com.video.youtuberplayer.model.VideoListHome;
 import com.video.youtuberplayer.model.VideoRealatedAndChanel;
 
 import java.io.IOException;
@@ -19,6 +22,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Function3;
 
 /**
@@ -35,6 +39,27 @@ public class VideoMethod {
                 e.onComplete();
             }
         });
+    }
+
+    public Observable<SearchListResponse> getPopularVideos(final long maxResults, final String tokenNextPage) throws IOException {
+        return Observable.create(new ObservableOnSubscribe<SearchListResponse>() {
+            @Override
+            public void subscribe(ObservableEmitter<SearchListResponse> e) throws Exception {
+                e.onNext(new GetPopularVideos(maxResults, tokenNextPage).getResponse());
+                e.onComplete();
+            }
+        });
+    }
+
+    public Observable<VideoListHome> getVideoListHome(final long maxResults, final String token,
+                                                      final String tokenNextPage) throws IOException {
+        return Observable.zip(getFeaturedVideo(maxResults, token, tokenNextPage),
+                getPopularVideos(maxResults, tokenNextPage), new BiFunction<VideoListResponse, SearchListResponse, VideoListHome>() {
+                    @Override
+                    public VideoListHome apply(VideoListResponse videoListResponse, SearchListResponse searchListResponse) throws Exception {
+                        return new VideoListHome(videoListResponse, searchListResponse);
+                    }
+                });
     }
 
     public Observable<List<GuideCategory>> getGuideCategories(final String regionCode,
